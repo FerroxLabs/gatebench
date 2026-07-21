@@ -66,7 +66,7 @@ gate results for those two tasks come from the main run (`results/results-full.j
 climb traces). The two ruff findings are real (and reported), and did not stop it topping MI
 and runtime.
 
-**Finding:** the LLM-judge deltas (7.47–8.88 across the 100%-visible wall) were largely
+**Finding:** the LLM-judge deltas (7.27–8.88 across the 100%-visible wall) were largely
 formatting/polish-driven, while the objective substance metrics — with formatting normalized —
 show the cheap-gated lane tied on correctness and **won** on maintainability (MI 51.6, highest)
 and measured runtime (103ms avg, fastest), at 1/7 (gpt-5.6-luna, $0.082) to 1/21 (opus-4.8,
@@ -82,8 +82,9 @@ The gate-first executor wraps a pool of cheap models in the visible machine gate
 cheap model, score against the gate, and climb under a **non-regressive rule** — a candidate
 only ever replaces the incumbent if its gate score is greater or equal, so the loop can never
 move backward, and it stops at 100% or at a bounded budget. On tasks the first probe clears, it
-stops at one call (see the toposort trace: `probe[minimax] 18/18 SOLVED — $0.0007`). Full
-per-task climb traces ship in the `anvil_log` fields of `results/results-full.json`.
+stops at one call (see the toposort trace: `probe[minimax] 18/18 SOLVED — simple task, no
+ensemble needed $0.0007`). Full per-task climb traces ship in the `anvil_log` fields of
+`results/results-full.json`.
 
 Its implementation is not in this repository; `runners/run_bench.py --lane gate-first` is a
 documented no-op that points here. The evidence lane is auditable via the shipped traces, costs,
@@ -111,15 +112,17 @@ and embedded code.
 
 - **Cheapest 100% lane by a wide margin:** the gate-first lane is the only 100%-visible lane
   under $0.08 ($0.032 for 5 tasks), holding 98% hidden (equal to opus-4.8). Next-cheapest 100%
-  lane: gpt-5.6-luna at 2.5×; opus-4.8 at 6.1×; premium frontier (sol/kimi/gemini) 12.6–28.8×.
+  lane: gpt-5.6-luna at 2.5×; opus-4.8 at 6.1×; premium frontier (sol/kimi/gemini) 12.6–28.9×.
 - **Gated climb beats subjective fusion:** fugu matched it on the gate at 6.3× the cost;
   fugu-ultra scored *worse* (80% visible) at 16× the cost; openrouter-fusion scored 59% at 50×
   the cost (judge 8.75 — pretty code, wrong answers). A real gate beats a subjective panel.
 - **The gate is the moat:** the same first-probe model ungated (minimax-solo) scores 88%/84%;
   gated, the pool reaches 100%/98% — and cheaper than the solo's own repair attempts, because
   the loop stops at one call whenever the probe clears the gate.
-- **The judge axis still separates the 100% wall** (7.47 opus → 8.88 sol): premium models buy
+- **The judge axis still separates the 100% wall** (7.27 deepseek → 8.88 sol): premium models buy
   ~1 judge-point of polish at 6–29× the cost, and the objective re-score shows that polish is
   mostly formatting.
 
-All figures trace to `results/*.json` (regenerate the ranked table with `runners/agg.py`).
+All figures trace to `results/*.json` (regenerate the ranked table with `runners/agg.py`, and
+every README chart with `assets/generate_charts.py` — its output is byte-deterministic, so a
+regenerated chart that differs from the shipped one is itself evidence of a discrepancy).

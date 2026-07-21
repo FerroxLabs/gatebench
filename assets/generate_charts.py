@@ -405,12 +405,12 @@ def chart_cost_per_correct(lanes):
 
 # ---------------------------------------------------------------- chart 5: four ways to spend
 GROUPS = [
-    ("Gated cheap pool (Anvil)", ["anvil-v2"]),
+    ("Gated pool (Anvil)", ["anvil-v2"]),
     ("Frontier solo", ["gpt-5-6-sol", "gpt-5-6-terra", "gpt-5-6-luna", "gemini-3-1-pro",
                        "opus-4-8", "claude-sonnet-5", "kimi-k3", "grok-4-5",
                        "deepseek-v4-pro"]),
     ("Fusion systems", ["fugu", "fugu-ultra", "openrouter-fusion"]),
-    ("Cheap solo", ["minimax-solo", "mistral-large", "qwen-plus", "claude-haiku"]),
+    ("Solo, low-cost tier", ["minimax-solo", "mistral-large", "qwen-plus", "claude-haiku"]),
 ]
 
 

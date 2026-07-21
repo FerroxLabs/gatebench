@@ -29,6 +29,10 @@ Charts written (all into assets/):
   gated-vs-fusion.svg       the multi-model head-to-head: Anvil vs fugu, fugu-ultra,
                             openrouter-fusion; visible and hidden gate % with cost
                             per task and the multiple vs Anvil under each system.
+  hero.svg                  the dark 1200x630 share graphic: the ten lanes at 100%
+                            visible in two mirrored panels, correctness parity on the
+                            left, measured cost per task (linear) on the right, sorted
+                            most expensive first with the gated pool at the bottom.
 
 Aggregation matches runners/agg.py exactly (per-lane mean over the 5 v1.7 tasks;
 failed cells score 0; costs summed as measured). The script asserts its own
@@ -536,6 +540,99 @@ def chart_gated_vs_fusion(lanes):
     return "\n".join(s) + "\n"
 
 
+# ---------------------------------------------------------------- chart 7: hero (dark share graphic)
+# dark palette, this chart only
+SURFACE_D = "#0e1113"
+INK_D = "#e8eaec"
+INK2_D = "#a6adb3"
+GRID_D = "#2c3237"
+BAR_D = "#4d565c"
+BLUE_D = "#5b9ae0"
+
+
+def hero_order(lanes):
+    """The 100%-visible lanes, most expensive per task first (gated pool lands last)."""
+    return list(reversed(perfect_lanes(lanes)))
+
+
+def chart_hero(lanes):
+    order = hero_order(lanes)
+    n = len(order)
+    base = lanes["anvil-v2"]["cost_per_task"]
+    xmax = lanes[order[0]]["cost_per_task"]
+    w, h = 1200, 630
+    y0, step, bar_h = 140, 40, 26
+    lw = 360                    # bar track width, both panels
+    lx1, rx0 = 515, 685         # left-panel bars end at lx1; right-panel bars start at rx0
+    rows_top = y0 - 8
+    rows_bot = y0 + (n - 1) * step + bar_h + 8
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+         f'viewBox="0 0 {w} {h}" role="img" aria-label="Dual-panel dark chart: the {n} '
+         'lanes that scored 100 percent on the visible gate, sorted by measured cost per '
+         'task. Left panel: correctness, all tied at 100 percent. Right panel: cost per '
+         f'task on a linear scale, from ${xmax:.4f} at the top down to ${base:.4f} for '
+         f'Anvil at the bottom, a {xmax / base:.1f}x spread.">',
+         f'<rect width="{w}" height="{h}" fill="{SURFACE_D}"/>']
+    s.append(text(60, 48, f"{n} systems scored 100%. Here's what each one paid.",
+                  23, INK_D, weight="700"))
+    s.append(text(60, 74, f"{len(TASKS)} tasks, 133 visible machine checks, measured "
+                          "spend per task. Fold run, every lane 5/5 tasks completed.",
+                  13, INK2_D))
+    s.append(text(lx1 - lw / 2, 118, "correctness: all tied at 100%", 13, INK_D,
+                  anchor="middle", weight="600"))
+    s.append(text(rx0 + lw / 2, 118, "measured cost per task (USD)", 13, INK_D,
+                  anchor="middle", weight="600"))
+    # gridlines behind the bars: mirrored % ticks on the left, linear USD ticks on the right
+    for v in (25, 50, 75, 100):
+        x = lx1 - v / 100 * lw
+        s.append(f'<line x1="{x:.1f}" y1="{rows_top}" x2="{x:.1f}" y2="{rows_bot}" '
+                 f'stroke="{GRID_D}" stroke-width="1"/>')
+    for v in (0, 50, 100):
+        s.append(text(lx1 - v / 100 * lw, rows_bot + 18, str(v), 11, INK2_D,
+                      anchor="middle"))
+    for c in (0.05, 0.10, 0.15):
+        x = rx0 + c / xmax * lw
+        s.append(f'<line x1="{x:.1f}" y1="{rows_top}" x2="{x:.1f}" y2="{rows_bot}" '
+                 f'stroke="{GRID_D}" stroke-width="1"/>')
+        s.append(text(x, rows_bot + 18, f"${c:.2f}", 11, INK2_D, anchor="middle"))
+    for i, lane in enumerate(order):
+        L = lanes[lane]
+        y = y0 + i * step
+        hot = lane == "anvil-v2"
+        fill = BLUE_D if hot else BAR_D
+        ink = INK_D if hot else INK2_D
+        wt = "700" if hot else "normal"
+        disp = "Anvil" if hot else lane
+        bw = max(L["cost_per_task"] / xmax * lw, 2.0)
+        if hot:
+            # subtle glow behind the highlighted bars
+            s.append(f'<rect x="{lx1 - lw - 3:.1f}" y="{y - 3}" width="{lw + 6}" '
+                     f'height="{bar_h + 6}" rx="7" fill="{BLUE_D}" fill-opacity="0.28"/>')
+            s.append(f'<rect x="{rx0 - 3}" y="{y - 3}" width="{bw + 6:.1f}" '
+                     f'height="{bar_h + 6}" rx="7" fill="{BLUE_D}" fill-opacity="0.28"/>')
+        s.append(f'<rect x="{lx1 - lw}" y="{y}" width="{lw}" height="{bar_h}" '
+                 f'rx="4" fill="{fill}"/>')
+        s.append(text(lx1 - lw - 10, y + bar_h / 2 + 4, "100", 12, ink, anchor="end",
+                      weight=wt))
+        s.append(text((lx1 + rx0) / 2, y + bar_h / 2 + 4, disp, 13, ink,
+                      anchor="middle", weight=wt))
+        s.append(f'<rect x="{rx0}" y="{y}" width="{bw:.1f}" height="{bar_h}" '
+                 f'rx="4" fill="{fill}"/>')
+        mult = "baseline" if hot else f"{L['cost_per_task'] / base:.1f}x"
+        s.append(text(rx0 + bw + 10, y + bar_h / 2 + 4,
+                      f"${L['cost_per_task']:.4f} · {mult}", 12, ink, weight=wt))
+    s.append(text(lx1 - lw / 2, rows_bot + 44, "avg visible-gate % (133 checks per lane)",
+                  11, INK2_D, anchor="middle"))
+    s.append(text(rx0 + lw / 2, rows_bot + 44, "linear scale; multiple vs Anvil on each bar",
+                  11, INK2_D, anchor="middle"))
+    s.append(text(60, h - 14, "github.com/FerroxLabs/gatebench", 10, INK2_D))
+    s.append(text(w - 60, h - 14, "generated by assets/generate_charts.py from "
+                                  "results/results-full.json + results-pass2.json",
+                  10, INK2_D, anchor="end"))
+    s.append("</svg>")
+    return "\n".join(s) + "\n"
+
+
 # ---------------------------------------------------------------- main
 def main():
     lanes = load_fold()
@@ -547,7 +644,8 @@ def main():
                       ("gate-lift.svg", chart_gate_lift(lanes)),
                       ("cost-per-correct-task.svg", chart_cost_per_correct(lanes)),
                       ("four-ways-to-spend.svg", chart_four_ways(lanes)),
-                      ("gated-vs-fusion.svg", chart_gated_vs_fusion(lanes))):
+                      ("gated-vs-fusion.svg", chart_gated_vs_fusion(lanes)),
+                      ("hero.svg", chart_hero(lanes))):
         path = os.path.join(ASSETS, name)
         with open(path, "w") as f:
             f.write(svg)
@@ -574,6 +672,11 @@ def main():
         mult = "baseline" if lane == "anvil-v2" else f"{L['cost_per_task'] / base:.1f}x"
         print(f"  {lane:18s} {L['visible']:5.1f}  {L['hidden']:5.1f}  "
               f"${L['cost_per_task']:.4f}  {mult}")
+    print("\nplotted (hero): 100%-visible lanes, most expensive per task first")
+    for lane in hero_order(lanes):
+        L = lanes[lane]
+        mult = "baseline" if lane == "anvil-v2" else f"{L['cost_per_task'] / base:.1f}x"
+        print(f"  {lane:18s} visible {L['visible']:5.1f}  ${L['cost_per_task']:.4f}/task  {mult}")
 
 
 if __name__ == "__main__":

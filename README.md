@@ -1,5 +1,7 @@
 # GATEBENCH
 
+![10 systems scored 100% on the visible gate; measured cost per task runs from $0.1829 at the top down to $0.0063 for the gated pool (Anvil) at the bottom, a 28.9x spread](assets/hero.svg)
+
 ![GATEBENCH — the gate is the moat](assets/banner.png)
 
 **A public, verifiable benchmark of the gate-first executor thesis:** wrap a pool of cheap

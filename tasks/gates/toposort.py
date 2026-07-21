@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-import sys, importlib.util
+import sys, importlib.util, importlib.machinery
 def load(path):
-    spec = importlib.util.spec_from_file_location("cand_ts", path); m = importlib.util.module_from_spec(spec)
+    # Explicit SourceFileLoader: the native gate-first executor writes candidates as
+    # artifact-N.txt; spec_from_file_location alone yields loader=None for non-.py paths.
+    loader = importlib.machinery.SourceFileLoader("cand_ts", path)
+    spec = importlib.util.spec_from_file_location("cand_ts", path, loader=loader)
+    m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m); return m
 def checks(f):
     return [

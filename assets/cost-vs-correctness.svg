@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="570" viewBox="0 0 920 570" role="img" aria-label="Average cost per task (log scale) versus average visible-gate percentage for 18 plotted lanes; the gate-first executor lane anvil-v2 sits in the top-left corner at 100 percent for $0.0063 per task.">
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="570" viewBox="0 0 920 570" role="img" aria-label="Average cost per task (log scale) versus average visible-gate percentage for 18 plotted lanes; the gate-first executor lane the Anvil lane sits in the top-left corner at 100 percent for $0.0063 per task.">
 <rect width="920" height="570" fill="#fcfcfb"/>
-<text x="64.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Correctness vs. cost — 20-lane fold, 5 tasks, 133 visible checks</text>
+<text x="64.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Correctness vs. cost: 20-lane fold, 5 tasks, 133 visible checks</text>
 <text x="64.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Each point is one lane: avg visible-gate % (y) vs measured avg cost per task (x, log scale). Top-left wins.</text>
 <text x="64.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="start">Excluded as flagged, not scored: fable-5 (router content-filter bug), hermes (empty output, $0 measured spend).</text>
 <line x1="64" y1="486.0" x2="890" y2="486.0" stroke="#e1e0d9" stroke-width="1"/>
@@ -38,7 +38,7 @@
 <text x="20" y="287.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle" transform="rotate(-90 20 287.0)">avg visible-gate %</text>
 <circle cx="309.4" cy="110.5" r="9" fill="none" stroke="#2a78d6" stroke-width="1.5"/>
 <circle cx="309.4" cy="110.5" r="4.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<text x="309.4" y="94.5" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="600">anvil-v2  $0.0063</text>
+<text x="309.4" y="94.5" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="600">Anvil  $0.0063</text>
 <circle cx="357.1" cy="148.1" r="4.5" fill="#a3a29b" stroke="#fcfcfb" stroke-width="2"/>
 <text x="367.1" y="162.1" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#52514e" text-anchor="start">claude-haiku</text>
 <circle cx="647.5" cy="110.5" r="4.5" fill="#a3a29b" stroke="#fcfcfb" stroke-width="2"/>

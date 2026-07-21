@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" role="img" aria-label="Objective substance re-score: anvil-v2 has the highest maintainability index at 51.6 and the fastest measured runtime at 103.4 ms among the four re-scored lanes.">
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" role="img" aria-label="Objective substance re-score: Anvil has the highest maintainability index at 51.6 and the fastest measured runtime at 103.4 ms among the four re-scored lanes.">
 <rect width="920" height="420" fill="#fcfcfb"/>
-<text x="40.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Objective substance — black-normalized, then measured (results-objective.json)</text>
-<text x="40.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Formatting equalized with black before scoring. anvil-v2 aggregates cover its 3/5 completed cells (expr_interp and csv_parse</text>
+<text x="40.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Objective substance: black-normalized, then measured (results-objective.json)</text>
+<text x="40.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Formatting equalized with black before scoring. Anvil aggregates cover its 3/5 completed cells (expr_interp and csv_parse</text>
 <text x="40.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">timed out at generation in this run and are recorded as failures); the other lanes cover 5/5. Runtime is a per-task stress workload.</text>
 <text x="40.0" y="86.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">Maintainability Index (radon, avg)</text>
 <text x="440.0" y="86.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">→ higher is better</text>
-<text x="40.0" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">anvil-v2 (gate-first)</text>
+<text x="40.0" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">Anvil (gate-first)</text>
 <rect x="170" y="110" width="173.9" height="30" rx="4" fill="#2a78d6"/>
 <text x="351.9" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">51.6</text>
 <text x="40.0" y="185.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">opus-4.8</text>
@@ -19,7 +19,7 @@
 <text x="321.8" y="297.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">42.7</text>
 <text x="500.0" y="86.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="start" font-weight="600">Measured runtime (ms, avg)</text>
 <text x="900.0" y="86.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">→ lower is better</text>
-<text x="500.0" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">anvil-v2 (gate-first)</text>
+<text x="500.0" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">Anvil (gate-first)</text>
 <rect x="630" y="110" width="51.6" height="30" rx="4" fill="#2a78d6"/>
 <text x="689.6" y="129.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">103.4 ms</text>
 <text x="500.0" y="185.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">opus-4.8</text>
@@ -31,6 +31,6 @@
 <text x="500.0" y="297.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">gpt-5.6-sol</text>
 <rect x="630" y="278" width="78.1" height="30" rx="4" fill="#a3a29b"/>
 <text x="716.1" y="297.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">156.6 ms</text>
-<text x="40.0" y="386.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Run cost for the same generations: anvil-v2 $0.012 · gpt-5.6-luna $0.082 · opus-4.8 $0.25 · gpt-5.6-sol $0.45</text>
+<text x="40.0" y="386.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Run cost for the same generations: Anvil $0.012 · gpt-5.6-luna $0.082 · opus-4.8 $0.25 · gpt-5.6-sol $0.45</text>
 <text x="890.0" y="408.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="10" fill="#898781" text-anchor="end">generated by assets/generate_charts.py from results/results-objective.json</text>
 </svg>

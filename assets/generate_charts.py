@@ -433,7 +433,7 @@ def chart_four_ways(lanes):
                        "solo, fusion systems, cheap solo.")
     s.append(text(ml, 28, "Four ways to spend: same tasks, same checks", 16, INK, weight="600"))
     s.append(text(ml, 48, "The 20-lane fold grouped by approach: averages per group over the "
-                          "same 5 tasks and 133 visible checks. The gated cheap pool", 12, INK2))
+                          "same 5 tasks and 133 visible checks. The gated pool", 12, INK2))
     s.append(text(ml, 64, "is the only group that pairs a 100% visible average with a "
                           "sub-cent cost per task.", 12, INK2))
     s.append(text(ml, 80, "Outside these four groups: glm-5-2 (ungrouped) and the two flagged "

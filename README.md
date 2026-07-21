@@ -28,6 +28,18 @@ lanes are excluded from the plot: `fable-5` (router content-filter bug — 0 is 
 score) and `hermes` (empty output on every task, $0 measured spend, unplottable on a log cost
 axis).*
 
+Three more views of the same fold, all emitted by the same self-checking script:
+
+- [`assets/cost-per-correct-task.svg`](assets/cost-per-correct-task.svg) — the 10 lanes that
+  scored 100% visible, ranked by measured avg cost per task, with the cost multiple vs the
+  gate-first lane on every bar.
+- [`assets/four-ways-to-spend.svg`](assets/four-ways-to-spend.svg) — the fold grouped by
+  approach (gated cheap pool / frontier solo / fusion systems / cheap solo): avg visible % and
+  avg cost per task per group.
+- [`assets/gated-vs-fusion.svg`](assets/gated-vs-fusion.svg) — the multi-model head-to-head:
+  the gated climb vs the three fusion/ensemble products, visible and hidden gate % with cost
+  per task under each system.
+
 ## Key results
 
 Ranked by cost among lanes that hit 100% visible; the ungated control is included for

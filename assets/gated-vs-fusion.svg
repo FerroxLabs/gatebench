@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="500" viewBox="0 0 920 500" role="img" aria-label="Grouped bars: visible and hidden gate percentages for the four multi-model systems; Anvil holds 100 percent visible at $0.0063 per task while the fusion systems cost 6.3x to 50.4x as much.">
+<rect width="920" height="500" fill="#fcfcfb"/>
+<text x="64.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Multi-model vs multi-model: the gate is the difference</text>
+<text x="64.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Four systems that combine multiple models on the same 5 tasks: three fusion/ensemble products vs the gated cheap-pool</text>
+<text x="64.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">climb (Anvil). Fusion merges opinions; the gate verifies output against the visible machine contract and climbs until it passes.</text>
+<line x1="64" y1="342.0" x2="844" y2="342.0" stroke="#e1e0d9" stroke-width="1"/>
+<text x="56.0" y="346.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">0</text>
+<line x1="64" y1="287.2" x2="844" y2="287.2" stroke="#e1e0d9" stroke-width="1"/>
+<text x="56.0" y="291.2" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">25</text>
+<line x1="64" y1="232.5" x2="844" y2="232.5" stroke="#e1e0d9" stroke-width="1"/>
+<text x="56.0" y="236.5" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">50</text>
+<line x1="64" y1="177.7" x2="844" y2="177.7" stroke="#e1e0d9" stroke-width="1"/>
+<text x="56.0" y="181.7" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">75</text>
+<line x1="64" y1="123.0" x2="844" y2="123.0" stroke="#e1e0d9" stroke-width="1"/>
+<text x="56.0" y="127.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">100</text>
+<rect x="120" y="123.0" width="64" height="219.0" rx="4" fill="#2a78d6"/>
+<text x="152.0" y="115.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">100.0</text>
+<rect x="194" y="126.5" width="64" height="215.5" rx="4" fill="#2a78d6" fill-opacity="0.5"/>
+<text x="226.0" y="118.5" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">98.4</text>
+<text x="189.0" y="362.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#0b0b0b" text-anchor="middle" font-weight="600">Anvil</text>
+<text x="189.0" y="380.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="600">$0.0063/task · baseline</text>
+<rect x="310" y="123.0" width="64" height="219.0" rx="4" fill="#a3a29b"/>
+<text x="342.0" y="115.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">100.0</text>
+<rect x="384" y="123.0" width="64" height="219.0" rx="4" fill="#a3a29b" fill-opacity="0.5"/>
+<text x="416.0" y="115.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">100.0</text>
+<text x="379.0" y="362.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#52514e" text-anchor="middle">fugu</text>
+<text x="379.0" y="380.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="middle">$0.0399/task · 6.3x vs Anvil</text>
+<rect x="500" y="166.8" width="64" height="175.2" rx="4" fill="#a3a29b"/>
+<text x="532.0" y="158.8" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">80.0</text>
+<rect x="574" y="169.8" width="64" height="172.2" rx="4" fill="#a3a29b" fill-opacity="0.5"/>
+<text x="606.0" y="161.8" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">78.6</text>
+<text x="569.0" y="362.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#52514e" text-anchor="middle">fugu-ultra</text>
+<text x="569.0" y="380.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="middle">$0.1046/task · 16.5x vs Anvil</text>
+<rect x="690" y="212.3" width="64" height="129.7" rx="4" fill="#a3a29b"/>
+<text x="722.0" y="204.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">59.2</text>
+<rect x="764" y="214.1" width="64" height="127.9" rx="4" fill="#a3a29b" fill-opacity="0.5"/>
+<text x="796.0" y="206.1" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="middle">58.4</text>
+<text x="759.0" y="362.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#52514e" text-anchor="middle">openrouter-fusion</text>
+<text x="759.0" y="380.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="middle">$0.3191/task · 50.4x vs Anvil</text>
+<rect x="120" y="86" width="14" height="14" rx="3" fill="#52514e"/>
+<text x="142.0" y="97.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#52514e" text-anchor="start">visible gate % (133 checks)</text>
+<rect x="330" y="86" width="14" height="14" rx="3" fill="#52514e" fill-opacity="0.5"/>
+<text x="352.0" y="97.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#52514e" text-anchor="start">hidden gate % (63 checks, never shown to any builder)</text>
+<text x="64.0" y="466.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="start">hermes (MoA agent): empty output on every task, flagged, not plotted.</text>
+<text x="890.0" y="488.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="10" fill="#898781" text-anchor="end">generated by assets/generate_charts.py from results/results-full.json + results-pass2.json</text>
+</svg>

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+# locally generated outputs (shipped evidence is committed; these are yours)
+results/results-local.json
+results/table-regen.md

@@ -1,0 +1,5 @@
+# Objective-quality tooling (runners/quality.py). The gates, runner, and verifier are pure stdlib.
+black
+radon
+ruff
+bandit

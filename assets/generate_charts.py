@@ -23,8 +23,8 @@ Charts written (all into assets/):
   cost-per-correct-task.svg horizontal bars: only the lanes that scored 100% visible,
                             sorted by measured avg cost per task, with the cost
                             multiple vs Anvil on every bar.
-  four-ways-to-spend.svg    the category slice: gated cheap pool / frontier solo /
-                            fusion systems / cheap solo, avg visible % and avg cost
+  four-ways-to-spend.svg    the category slice: gated pool / frontier solo /
+                            fusion systems / low-cost solo, avg visible % and avg cost
                             per task per group, computed from the same fold.
   gated-vs-fusion.svg       the multi-model head-to-head: Anvil vs fugu, fugu-ultra,
                             openrouter-fusion; visible and hidden gate % with cost
@@ -298,13 +298,13 @@ def chart_gate_lift(lanes):
     ml, mt = 64, 96
     ph, pw = 220, 560
     ymax = 105.0
-    s = svg_open(w, h, "Gate lift: the same cheap first-probe model scores 87.6 percent visible "
+    s = svg_open(w, h, "Gate lift: the same first-probe model scores 87.6 percent visible "
                        "and 83.8 percent hidden ungated; wrapped in the gate the pool reaches "
                        "100 percent visible and 98.4 percent hidden.")
-    s.append(text(ml, 28, "The gate is the lift: same cheap pool, ungated vs. gated", 16, INK,
+    s.append(text(ml, 28, "The gate is the lift: same pool, ungated vs. gated", 16, INK,
                   weight="600"))
     s.append(text(ml, 48, "minimax-solo is the gate-first executor's own first-probe model run "
-                          "bare, one-shot. Anvil wraps the same cheap pool in the", 12, INK2))
+                          "bare, one-shot. Anvil wraps the same pool of models in the", 12, INK2))
     s.append(text(ml, 64, "visible machine gate with a non-regressive climb. Averages over the "
                           "same 5 tasks; the hidden gate is never shown to any builder.", 12, INK2))
 
@@ -372,7 +372,7 @@ def chart_cost_per_correct(lanes):
                           f"{money(base)}", 16, INK, weight="600"))
     s.append(text(40, 48, f"Every lane below cleared all 133 visible checks across the same "
                           f"5 tasks. Bars are measured avg cost per task (5-task total / 5),", 12, INK2))
-    s.append(text(40, 64, "cheapest first, with the cost multiple vs the gated cheap pool. "
+    s.append(text(40, 64, "cheapest first, with the cost multiple vs the gated pool. "
                           "Same fold as the full 20-lane table.", 12, INK2))
     # vertical gridlines
     for c in (0.05, 0.10, 0.15):
@@ -429,8 +429,8 @@ def chart_four_ways(lanes):
     panel_w, gap, ml, mt = 400, 60, 40, 112
     step, bar_h = 66, 24
     s = svg_open(w, h, "Two panels: average visible-gate percentage and average measured "
-                       "cost per task for four approach groups: gated cheap pool, frontier "
-                       "solo, fusion systems, cheap solo.")
+                       "cost per task for four approach groups: gated pool, frontier "
+                       "solo, fusion systems, low-cost solo.")
     s.append(text(ml, 28, "Four ways to spend: same tasks, same checks", 16, INK, weight="600"))
     s.append(text(ml, 48, "The 20-lane fold grouped by approach: averages per group over the "
                           "same 5 tasks and 133 visible checks. The gated pool", 12, INK2))
@@ -484,7 +484,7 @@ def chart_gated_vs_fusion(lanes):
     s.append(text(ml, 28, "Multi-model vs multi-model: the gate is the difference", 16, INK,
                   weight="600"))
     s.append(text(ml, 48, "Four systems that combine multiple models on the same 5 tasks: "
-                          "three fusion/ensemble products vs the gated cheap-pool", 12, INK2))
+                          "three fusion/ensemble products vs the gated-pool", 12, INK2))
     s.append(text(ml, 64, "climb (Anvil). Fusion merges opinions; the gate verifies output "
                           "against the visible machine contract and climbs until it passes.", 12, INK2))
 

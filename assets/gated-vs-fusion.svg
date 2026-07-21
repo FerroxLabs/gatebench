@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="500" viewBox="0 0 920 500" role="img" aria-label="Grouped bars: visible and hidden gate percentages for the four multi-model systems; Anvil holds 100 percent visible at $0.0063 per task while the fusion systems cost 6.3x to 50.4x as much.">
 <rect width="920" height="500" fill="#fcfcfb"/>
 <text x="64.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">Multi-model vs multi-model: the gate is the difference</text>
-<text x="64.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Four systems that combine multiple models on the same 5 tasks: three fusion/ensemble products vs the gated cheap-pool</text>
+<text x="64.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Four systems that combine multiple models on the same 5 tasks: three fusion/ensemble products vs the gated-pool</text>
 <text x="64.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">climb (Anvil). Fusion merges opinions; the gate verifies output against the visible machine contract and climbs until it passes.</text>
 <line x1="64" y1="342.0" x2="844" y2="342.0" stroke="#e1e0d9" stroke-width="1"/>
 <text x="56.0" y="346.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="end">0</text>

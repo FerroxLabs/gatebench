@@ -2,7 +2,7 @@
 <rect width="920" height="554" fill="#fcfcfb"/>
 <text x="40.0" y="28.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" fill="#0b0b0b" text-anchor="start" font-weight="600">The price of a correct task: 10 systems at 100%, one at $0.0063</text>
 <text x="40.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">Every lane below cleared all 133 visible checks across the same 5 tasks. Bars are measured avg cost per task (5-task total / 5),</text>
-<text x="40.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">cheapest first, with the cost multiple vs the gated cheap pool. Same fold as the full 20-lane table.</text>
+<text x="40.0" y="64.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#52514e" text-anchor="start">cheapest first, with the cost multiple vs the gated pool. Same fold as the full 20-lane table.</text>
 <line x1="336.5" y1="100" x2="336.5" y2="480" stroke="#e1e0d9" stroke-width="1"/>
 <text x="336.5" y="496.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#898781" text-anchor="middle">$0.05</text>
 <line x1="465.0" y1="100" x2="465.0" y2="480" stroke="#e1e0d9" stroke-width="1"/>

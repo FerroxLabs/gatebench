@@ -1,0 +1,89 @@
+[
+  {
+    "lane": "fable-5-bare",
+    "task": "expr_interp",
+    "ok": false,
+    "err": "finish=content_filter",
+    "cost": 0,
+    "via": "openrouter"
+  },
+  {
+    "lane": "fable-5-bare",
+    "task": "csv_parse",
+    "ok": false,
+    "err": "finish=content_filter",
+    "cost": 0,
+    "via": "openrouter"
+  },
+  {
+    "lane": "fable-5-bare",
+    "task": "semver_cmp",
+    "ok": false,
+    "err": "finish=content_filter",
+    "cost": 0,
+    "via": "openrouter"
+  },
+  {
+    "lane": "fable-5-bare",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 10.0,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 9
+          },
+          "one_line": "Correct Kahn's with heap tie-break, dedupe, full node set."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn implementation covering dependencies, duplicates, cycles, and absent keys."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.05179,
+    "finish": "stop",
+    "via": "openrouter"
+  },
+  {
+    "lane": "fable-5-bare",
+    "task": "url_canon",
+    "ok": false,
+    "err": "finish=content_filter",
+    "cost": 0,
+    "via": "openrouter"
+  }
+]

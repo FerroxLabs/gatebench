@@ -1,0 +1,64 @@
+[
+  {
+    "lane": "minimax-solo",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      21,
+      29
+    ],
+    "hidden": [
+      8,
+      15
+    ],
+    "visible_pct": 72,
+    "hidden_pct": 53,
+    "judge": {
+      "medians": {
+        "readability": 6.5,
+        "robustness": 3.5,
+        "edge": 3.0,
+        "security": 5.5
+      },
+      "overall": 4.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 6,
+            "robustness": 3,
+            "edge": 2,
+            "security": 6
+          },
+          "one_line": "Value-None conflation and precedence bug: unary binds too high."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 4,
+            "edge": 4,
+            "security": 5
+          },
+          "one_line": "Clear recursive parser, but precedence and negative-power semantics are incorrect."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": true,
+          "scores": {
+            "readability": null,
+            "robustness": null,
+            "edge": null,
+            "security": null
+          },
+          "one_line": ""
+        }
+      ]
+    },
+    "cost": 0.002264,
+    "anvil_log": null,
+    "anvil_score": null
+  }
+]

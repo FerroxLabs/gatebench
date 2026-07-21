@@ -1,0 +1,118 @@
+[
+  {
+    "lane": "anvil-v3",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      14,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 93,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 6.0,
+        "edge": 5.0,
+        "security": 9.0
+      },
+      "overall": 7.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 9
+          },
+          "one_line": "Clean recursive descent but mishandles consecutive semicolons and power with unary base"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.010321,
+    "via": "flux"
+  },
+  {
+    "lane": "anvil-ultra",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      14,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 93,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 6.0,
+        "edge": 5.0,
+        "security": 9.0
+      },
+      "overall": 7.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 9
+          },
+          "one_line": "Clean recursive descent but mishandles consecutive semicolons and power with unary base"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.057374,
+    "via": "flux"
+  },
+  {
+    "lane": "anvil-v3",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      0,
+      29
+    ],
+    "hidden": [
+      0,
+      12
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "overall": null,
+      "medians": {},
+      "panel": []
+    },
+    "cost": 0.0,
+    "via": "flux"
+  }
+]

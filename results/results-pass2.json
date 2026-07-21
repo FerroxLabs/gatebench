@@ -1,0 +1,3596 @@
+[
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": null,
+        "robustness": null,
+        "edge": null,
+        "security": null
+      },
+      "overall": null,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.118008,
+    "finish": "stop"
+  },
+  {
+    "lane": "gpt-5-6-terra",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 8.0,
+        "edge": 8.0,
+        "security": 7.0
+      },
+      "overall": 8.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 8,
+            "security": 7
+          },
+          "one_line": "Clean, correct; large exponentiation could exhaust resources."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.069554,
+    "finish": "stop"
+  },
+  {
+    "lane": "claude-haiku",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      26,
+      29
+    ],
+    "hidden": [
+      13,
+      15
+    ],
+    "visible_pct": 90,
+    "hidden_pct": 87,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 3.0,
+        "edge": 3.0,
+        "security": 6.0
+      },
+      "overall": 4.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 3,
+            "edge": 3,
+            "security": 6
+          },
+          "one_line": "Critical bug: '**' never tokenized, power operator fully broken."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.011098,
+    "finish": "stop"
+  },
+  {
+    "lane": "mistral-large",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      21,
+      29
+    ],
+    "hidden": [
+      7,
+      15
+    ],
+    "visible_pct": 72,
+    "hidden_pct": 47,
+    "judge": {
+      "medians": {
+        "readability": 6.0,
+        "robustness": 2.0,
+        "edge": 2.0,
+        "security": 8.0
+      },
+      "overall": 4.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 6,
+            "robustness": 2,
+            "edge": 2,
+            "security": 8
+          },
+          "one_line": "Broken paren/`//` tokens and undetected unknown chars."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.003127,
+    "finish": "stop"
+  },
+  {
+    "lane": "qwen-plus",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      21,
+      29
+    ],
+    "hidden": [
+      11,
+      15
+    ],
+    "visible_pct": 72,
+    "hidden_pct": 73,
+    "judge": {
+      "medians": {
+        "readability": 7.5,
+        "robustness": 3.5,
+        "edge": 3.0,
+        "security": 5.5
+      },
+      "overall": 4.88,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 5,
+            "edge": 4,
+            "security": 6
+          },
+          "one_line": "Clean structure but sentinel-None conflates errors and precedence bugs exist"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 2,
+            "edge": 2,
+            "security": 5
+          },
+          "one_line": "Major precedence and semicolon parsing violations; Unicode and resource edge cases remain."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.023534,
+    "finish": "stop"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.5
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct, clean, handles edge cases well; minor duplication."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 10
+          },
+          "one_line": "Clear, compact parser closely follows all specified CSV edge cases."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.032463,
+    "finish": "stop"
+  },
+  {
+    "lane": "gpt-5-6-terra",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 8.0
+      },
+      "overall": 8.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 8
+          },
+          "one_line": "Clean state machine, handles edge cases correctly."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.02579,
+    "finish": "stop"
+  },
+  {
+    "lane": "claude-haiku",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      22,
+      25
+    ],
+    "hidden": [
+      8,
+      12
+    ],
+    "visible_pct": 88,
+    "hidden_pct": 67,
+    "judge": {
+      "medians": {
+        "readability": 7.5,
+        "robustness": 5.5,
+        "edge": 3.5,
+        "security": 8.0
+      },
+      "overall": 6.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 5,
+            "edge": 3,
+            "security": 7
+          },
+          "one_line": "Trailing separator wrongly creates extra empty record."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 4,
+            "security": 9
+          },
+          "one_line": "Handles quoting clearly, but mishandles trailing separators and lone CR."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.004717,
+    "finish": "stop"
+  },
+  {
+    "lane": "fugu",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 10.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 10
+          },
+          "one_line": "Correct shunting-yard interpreter; handles edge cases well."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.07234,
+    "finish": "system",
+    "truncated": false
+  },
+  {
+    "lane": "fugu-ultra",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      14,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 93,
+    "judge": {
+      "medians": {
+        "readability": null,
+        "robustness": null,
+        "edge": null,
+        "security": null
+      },
+      "overall": null,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.10245,
+    "finish": "system",
+    "truncated": false
+  },
+  {
+    "lane": "fable-5",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      0,
+      29
+    ],
+    "hidden": [
+      0,
+      15
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {
+        "readability": 0.0,
+        "robustness": 0.0,
+        "edge": 0.0,
+        "security": 0.0
+      },
+      "overall": 0.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source provided to review."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source was provided, so implementation cannot be evaluated."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": true,
+          "scores": {
+            "readability": null,
+            "robustness": null,
+            "edge": null,
+            "security": null
+          },
+          "one_line": "No candidate source provided for review."
+        }
+      ]
+    },
+    "cost": 0.009105,
+    "finish": "content_filter",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "deepseek-v4-pro",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      14,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 93,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 6.0,
+        "edge": 5.0,
+        "security": 8.0
+      },
+      "overall": 6.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 8
+          },
+          "one_line": "Clean structure but empty-parens/two-literals edge cases mishandled by parser"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.041134624,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "gemini-3-1-pro",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 8.0,
+        "edge": 8.0,
+        "security": 8.0
+      },
+      "overall": 7.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 8,
+            "edge": 8,
+            "security": 8
+          },
+          "one_line": "Correct precedence and edge handling; solid recursive descent."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.258122,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "claude-sonnet-5",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 7.5,
+        "edge": 7.0,
+        "security": 8.0
+      },
+      "overall": 7.88,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 8,
+            "security": 8
+          },
+          "one_line": "Clean recursive-descent interpreter; handles keywords implicitly, negative exponent correctly."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 7,
+            "edge": 6,
+            "security": 8
+          },
+          "one_line": "Clear interpreter, but Unicode token acceptance and uncaught parsing failures weaken edge compliance."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.091966,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "kimi-k3",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 8.5,
+        "edge": 9.0,
+        "security": 8.0
+      },
+      "overall": 8.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean recursive-descent interpreter, correct semantics, thorough edge handling"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 9,
+            "security": 7
+          },
+          "one_line": "Strong parser and validation; extreme exponentiation remains a resource-risk."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.318009,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "glm-5-2",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      15,
+      15
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 6.0,
+        "edge": 5.0,
+        "security": 8.0
+      },
+      "overall": 6.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 8
+          },
+          "one_line": "Clean recursive-descent but the None-sentinel collides with legitimate zero-value errors"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.0216126,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "openrouter-fusion",
+    "task": "expr_interp",
+    "ok": true,
+    "visible": [
+      0,
+      29
+    ],
+    "hidden": [
+      0,
+      15
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {},
+      "overall": null,
+      "panel": [],
+      "skipped": "truncated"
+    },
+    "cost": 0.600887,
+    "finish": "system",
+    "truncated": true,
+    "via": "system"
+  },
+  {
+    "lane": "hermes",
+    "task": "expr_interp",
+    "ok": false,
+    "err": "empty output (credits/endpoint?)",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "fable-5",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      0,
+      25
+    ],
+    "hidden": [
+      0,
+      12
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {
+        "readability": 0.0,
+        "robustness": 0.0,
+        "edge": 0.0,
+        "security": 0.0
+      },
+      "overall": 0.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 1,
+            "robustness": 1,
+            "edge": 1,
+            "security": 1
+          },
+          "one_line": "No candidate source provided to review."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "Candidate source was not provided for review."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "no code provided"
+        }
+      ]
+    },
+    "cost": 0.007616,
+    "finish": "content_filter",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "mistral-large",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      21,
+      25
+    ],
+    "hidden": [
+      8,
+      12
+    ],
+    "visible_pct": 84,
+    "hidden_pct": 67,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 6.0,
+        "edge": 4.0,
+        "security": 8.5
+      },
+      "overall": 6.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 8
+          },
+          "one_line": "Clean parser but empty-string and trailing-separator edge cases fail"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 3,
+            "security": 9
+          },
+          "one_line": "Readable, but mishandles empty input and trailing separators."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.001262,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "qwen-plus",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      0,
+      25
+    ],
+    "hidden": [
+      0,
+      12
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {},
+      "overall": null,
+      "panel": [],
+      "skipped": "truncated"
+    },
+    "cost": 0.037943,
+    "finish": "stop",
+    "truncated": true,
+    "via": "flux"
+  },
+  {
+    "lane": "gemini-3-1-pro",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 9.0,
+        "edge": 8.5,
+        "security": 9.5
+      },
+      "overall": 8.88,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean state machine, handles edge cases well"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 10
+          },
+          "one_line": "Clear state-machine parser handles required quoting and separators."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.22987,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "claude-sonnet-5",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      11,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 92,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct state machine handling all specified edge cases."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.10354,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "kimi-k3",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct, iterative parser with thorough self-tests"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.135555,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "glm-5-2",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 8.5
+      },
+      "overall": 8.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 8
+          },
+          "one_line": "Clean state machine, handles edge cases correctly including trailing separators."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clear state machine correctly handles specified CSV edge cases."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.0124928,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "openrouter-fusion",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      24,
+      25
+    ],
+    "hidden": [
+      11,
+      12
+    ],
+    "visible_pct": 96,
+    "hidden_pct": 92,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 8.0,
+        "security": 9.0
+      },
+      "overall": 8.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean, correct parser; final-flush edge cases handled well."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.02661,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "hermes",
+    "task": "csv_parse",
+    "ok": false,
+    "err": "empty output (credits/endpoint?)",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "fugu",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 8.5,
+        "edge": 8.5,
+        "security": 9.5
+      },
+      "overall": 8.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Correct and clean; lone CR not handled but unspecified."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 10
+          },
+          "one_line": "Correct RFC-style parser with sensible lenient edge handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.01347,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "fugu-ultra",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.5
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean state machine; handles most edges but lone-CR quirk untested."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct, self-contained parser with strong malformed-input handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.12228,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct SemVer implementation handling edge cases well."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct SemVer validation and precedence comparison with careful ASCII handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.063386,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "gpt-5-6-terra",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 8.5,
+        "edge": 9.0,
+        "security": 9.5
+      },
+      "overall": 8.88,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Correct, clear SemVer implementation with careful edge handling"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct, careful SemVer parsing and precedence implementation."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.034162,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "claude-haiku",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.5,
+        "security": 7.0
+      },
+      "overall": 7.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 8,
+            "security": 8
+          },
+          "one_line": "Correct SemVer via regex; clean, handles edge cases well."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 6
+          },
+          "one_line": "Correct precedence logic, but Unicode digits, trailing newlines, and huge integers break strictness."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.009553,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "fable-5",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      0,
+      32
+    ],
+    "hidden": [
+      0,
+      14
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {
+        "readability": 0.0,
+        "robustness": 0.0,
+        "edge": 0.0,
+        "security": 0.0
+      },
+      "overall": 0.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 1,
+            "robustness": 1,
+            "edge": 1,
+            "security": 1
+          },
+          "one_line": "No source code provided to review"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source was provided for review."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source code to review"
+        }
+      ]
+    },
+    "cost": 0.010001,
+    "finish": "content_filter",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "mistral-large",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.0,
+        "security": 7.5
+      },
+      "overall": 7.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 7,
+            "security": 8
+          },
+          "one_line": "Correct, clean SemVer implementation; isdigit edge cases minor concern"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 7
+          },
+          "one_line": "Clear implementation, but Unicode digits and huge numeric identifiers violate strict edge handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.002604,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "qwen-plus",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.5,
+        "security": 8.0
+      },
+      "overall": 7.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 8,
+            "security": 8
+          },
+          "one_line": "Correct, clear SemVer implementation with proper edge handling"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 8
+          },
+          "one_line": "Clear implementation, but Unicode digits and huge numeric fields violate required behavior."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.01664,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "deepseek-v4-pro",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 7.5,
+        "edge": 7.0,
+        "security": 8.0
+      },
+      "overall": 7.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct SemVer implementation with solid edge-case handling."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 7
+          },
+          "one_line": "Clear implementation, but newline acceptance and huge-number handling violate exactness."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.0104006586,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "gemini-3-1-pro",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct regex-based SemVer with clean precedence logic."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.149766,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "claude-sonnet-5",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 7.5,
+        "edge": 6.5,
+        "security": 8.0
+      },
+      "overall": 7.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean, correct SemVer implementation with thorough self-checks."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 6,
+            "edge": 5,
+            "security": 7
+          },
+          "one_line": "Correct core logic, but ASCII/newline and huge-number issues remain."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.036086,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "kimi-k3",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.5,
+        "security": 9.0
+      },
+      "overall": 9.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct, handles edge cases; parsing order is sound."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 9
+          },
+          "one_line": "Correct, careful SemVer implementation with strong validation and precedence handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.094242,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "glm-5-2",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      31,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 97,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 4.0,
+        "edge": 3.0,
+        "security": 8.0
+      },
+      "overall": 5.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 4,
+            "edge": 3,
+            "security": 8
+          },
+          "one_line": "Splits prerelease at first dash, rejects valid dash-containing identifiers."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.0056892,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "openrouter-fusion",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 7.5,
+        "edge": 7.0,
+        "security": 8.5
+      },
+      "overall": 8.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean, correct SemVer implementation with proper prerelease/build handling."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 6,
+            "edge": 6,
+            "security": 8
+          },
+          "one_line": "Clear implementation, but Unicode digits and huge numerals break strict validity."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.04435,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "hermes",
+    "task": "semver_cmp",
+    "ok": false,
+    "err": "empty output (credits/endpoint?)",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "fugu",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Clean regex-based SemVer with correct precedence and validation logic."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 9
+          },
+          "one_line": "Correct, self-contained SemVer implementation with thorough validation and precedence handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.01729,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "fugu-ultra",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible": [
+      32,
+      32
+    ],
+    "hidden": [
+      14,
+      14
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 9.0,
+        "edge": 9.5,
+        "security": 8.5
+      },
+      "overall": 8.88,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 8
+          },
+          "one_line": "Clean, correct SemVer implementation handling edge cases well."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 9
+          },
+          "one_line": "Correct SemVer parsing and precedence; clean, defensive implementation."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.21285,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm with heap tie-break, handles all edge cases correctly"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn topological sort handling absent and duplicate dependencies."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.024276,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "gpt-5-6-terra",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm with heap, handles all edge cases correctly"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct, deterministic Kahn topological sort with proper absent-node handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.010407,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "claude-haiku",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.5,
+        "robustness": 8.0,
+        "edge": 9.5,
+        "security": 9.0
+      },
+      "overall": 8.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 9,
+            "security": 8
+          },
+          "one_line": "Correct Kahn's algorithm, handles all edge cases, slightly inefficient re-sort"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn sort; repeated sorting makes large graphs inefficient."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.008186,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "fable-5",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      0,
+      18
+    ],
+    "hidden": [
+      0,
+      10
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {},
+      "overall": null,
+      "panel": [],
+      "skipped": "truncated"
+    },
+    "cost": 0.0351,
+    "finish": "content_filter",
+    "truncated": true,
+    "via": "flux"
+  },
+  {
+    "lane": "mistral-large",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.25,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm with correct dedup and tie-break."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn sort handling missing nodes, duplicates, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.001265,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "qwen-plus",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 8.5,
+        "edge": 8.5,
+        "security": 9.5
+      },
+      "overall": 8.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 8,
+            "security": 9
+          },
+          "one_line": "Correct Kahn's algorithm; min-scan inefficient but functionally solid"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 9,
+            "edge": 9,
+            "security": 10
+          },
+          "one_line": "Correct deterministic topological sort with proper implicit-node and cycle handling."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.009862,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "deepseek-v4-pro",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.5,
+        "robustness": 8.5,
+        "edge": 9.5,
+        "security": 9.0
+      },
+      "overall": 9.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 9,
+            "security": 8
+          },
+          "one_line": "Clean Kahn's algorithm with heap; correct node set and tie-break"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 10,
+            "robustness": 9,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn sort; handles implicit nodes, duplicates, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.00990234,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "gemini-3-1-pro",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct Kahn's algorithm with heap tie-break; handles all edge cases."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn topological sort, including absent nodes and duplicate edges."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.063432,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "claude-sonnet-5",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.0,
+        "edge": 9.0,
+        "security": 9.0
+      },
+      "overall": 9.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct Kahn's algorithm with heap-based deterministic tie-break, well-tested."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct deterministic Kahn sort; extra smoke-test I/O slightly violates purity."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.012308,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "kimi-k3",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean, correct Kahn's algorithm with proper deterministic tie-break."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn sort handles implicit nodes, duplicates, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.015624,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "glm-5-2",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.5,
+        "robustness": 9.5,
+        "edge": 10.0,
+        "security": 9.5
+      },
+      "overall": 9.62,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 10,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm with heap, correct node set and tie-break"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 10,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic heap-based topological sort; handles missing nodes, duplicates, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.0193306,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "openrouter-fusion",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.5,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm, correct node set and deterministic tie-break"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 10,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn sort handling dependencies, duplicates, missing keys, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.02268,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "hermes",
+    "task": "toposort",
+    "ok": false,
+    "err": "empty output (credits/endpoint?)",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "fugu",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Clean Kahn's algorithm with heap tie-break, handles all edge cases"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn topological sort; handles implicit nodes, duplicates, and cycles."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.00473,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "fugu-ultra",
+    "task": "toposort",
+    "ok": true,
+    "visible": [
+      18,
+      18
+    ],
+    "hidden": [
+      10,
+      10
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 9.5,
+        "edge": 9.5,
+        "security": 9.5
+      },
+      "overall": 9.38,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 9,
+            "edge": 9,
+            "security": 9
+          },
+          "one_line": "Correct Kahn's algorithm with heap tie-break, handles all edge cases."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 10,
+            "edge": 10,
+            "security": 10
+          },
+          "one_line": "Correct deterministic Kahn topological sort handling all specified edge cases."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.08565,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 8.0,
+        "edge": 7.0,
+        "security": 8.0
+      },
+      "overall": 7.75,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 7,
+            "security": 8
+          },
+          "one_line": "Clean, strict parser; minor trailing-slash edge nuances but solid security posture."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.16143,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "gpt-5-6-terra",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.0,
+        "security": 7.0
+      },
+      "overall": 7.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 7,
+            "edge": 6,
+            "security": 7
+          },
+          "one_line": "Clean structured normalizer, but path/percent edge cases imperfect"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.073575,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "claude-haiku",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      28,
+      29
+    ],
+    "hidden": [
+      11,
+      12
+    ],
+    "visible_pct": 97,
+    "hidden_pct": 92,
+    "judge": {
+      "medians": {
+        "readability": 6.5,
+        "robustness": 3.5,
+        "edge": 3.0,
+        "security": 3.5
+      },
+      "overall": 4.12,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 4,
+            "edge": 3,
+            "security": 4
+          },
+          "one_line": "Clear structure but multiple spec violations in trailing-slash, port, encoding handling"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 6,
+            "robustness": 3,
+            "edge": 3,
+            "security": 3
+          },
+          "one_line": "Readable structure, but weak host validation and several parsing and normalization bugs."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.011793,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "fable-5",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      0,
+      29
+    ],
+    "hidden": [
+      0,
+      12
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {
+        "readability": 0.0,
+        "robustness": 0.0,
+        "edge": 0.0,
+        "security": 0.0
+      },
+      "overall": 0.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source was provided for review."
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": true,
+          "scores": {
+            "readability": 0,
+            "robustness": 0,
+            "edge": 0,
+            "security": 0
+          },
+          "one_line": "No candidate source code provided."
+        }
+      ]
+    },
+    "cost": 0.010953,
+    "finish": "content_filter",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "mistral-large",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      10,
+      29
+    ],
+    "hidden": [
+      2,
+      12
+    ],
+    "visible_pct": 34,
+    "hidden_pct": 17,
+    "judge": {
+      "medians": {
+        "readability": 6.0,
+        "robustness": 4.0,
+        "edge": 3.0,
+        "security": 4.0
+      },
+      "overall": 4.25,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 6,
+            "robustness": 4,
+            "edge": 3,
+            "security": 4
+          },
+          "one_line": "Multiple bugs in port stripping, trailing slash, host validation, dedup"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.002502,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "qwen-plus",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      9,
+      29
+    ],
+    "hidden": [
+      1,
+      12
+    ],
+    "visible_pct": 31,
+    "hidden_pct": 8,
+    "judge": {
+      "medians": {
+        "readability": 3.0,
+        "robustness": 3.0,
+        "edge": 3.0,
+        "security": 4.0
+      },
+      "overall": 3.25,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 3,
+            "robustness": 3,
+            "edge": 3,
+            "security": 4
+          },
+          "one_line": "Convoluted duplicate logic with multiple correctness bugs in edge cases"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.026952,
+    "finish": "stop",
+    "truncated": false,
+    "via": "flux"
+  },
+  {
+    "lane": "deepseek-v4-pro",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 5.0,
+        "edge": 4.0,
+        "security": 5.0
+      },
+      "overall": 5.25,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 5,
+            "edge": 4,
+            "security": 5
+          },
+          "one_line": "Clear structure but several edge-case and percent-encoding bugs"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.01578598749,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "gemini-3-1-pro",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 4.0,
+        "edge": 3.0,
+        "security": 4.0
+      },
+      "overall": 4.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 4,
+            "edge": 3,
+            "security": 4
+          },
+          "one_line": "Clear structure but multiple correctness bugs in edge cases"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.213352,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "claude-sonnet-5",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.0,
+        "security": 7.0
+      },
+      "overall": 7.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 7,
+            "edge": 6,
+            "security": 7
+          },
+          "one_line": "Clean and strict, but over-rejects valid hosts and trailing-slash edge cases."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.159436,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "kimi-k3",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 9.0,
+        "robustness": 8.0,
+        "edge": 7.0,
+        "security": 8.0
+      },
+      "overall": 8.0,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 9,
+            "robustness": 8,
+            "edge": 7,
+            "security": 8
+          },
+          "one_line": "Clean, well-documented; over-strict host chars and rejects IPv6/empty-segment cases."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.308562,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "glm-5-2",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 7.0,
+        "edge": 6.0,
+        "security": 8.0
+      },
+      "overall": 7.25,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 7,
+            "edge": 6,
+            "security": 8
+          },
+          "one_line": "Clean structure, but path percent-encoding and trailing-slash edge cases imperfect"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.03644582,
+    "finish": "stop",
+    "truncated": false,
+    "via": "openrouter"
+  },
+  {
+    "lane": "openrouter-fusion",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      0,
+      29
+    ],
+    "hidden": [
+      0,
+      12
+    ],
+    "visible_pct": 0,
+    "hidden_pct": 0,
+    "judge": {
+      "medians": {},
+      "overall": null,
+      "panel": [],
+      "skipped": "truncated"
+    },
+    "cost": 0.901051,
+    "finish": "system",
+    "truncated": true,
+    "via": "system"
+  },
+  {
+    "lane": "hermes",
+    "task": "url_canon",
+    "ok": false,
+    "err": "empty output (credits/endpoint?)",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "fugu",
+    "task": "url_canon",
+    "ok": true,
+    "visible": [
+      29,
+      29
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 8.0,
+        "robustness": 8.0,
+        "edge": 6.0,
+        "security": 8.0
+      },
+      "overall": 7.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 8,
+            "robustness": 8,
+            "edge": 6,
+            "security": 8
+          },
+          "one_line": "Clean, strict normalizer; trailing-slash and dot-clamping edge cases slightly off"
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.09154,
+    "finish": "system",
+    "truncated": false,
+    "via": "system"
+  },
+  {
+    "lane": "fugu-ultra",
+    "task": "url_canon",
+    "ok": false,
+    "err": "timeout",
+    "cost": 0.0,
+    "via": "system"
+  },
+  {
+    "lane": "deepseek-v4-pro",
+    "task": "csv_parse",
+    "ok": true,
+    "visible": [
+      25,
+      25
+    ],
+    "hidden": [
+      12,
+      12
+    ],
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "judge": {
+      "medians": {
+        "readability": 7.0,
+        "robustness": 8.0,
+        "edge": 7.0,
+        "security": 8.0
+      },
+      "overall": 7.5,
+      "panel": [
+        {
+          "model": "flux-pinned-claude-opus-4-8",
+          "ok": true,
+          "scores": {
+            "readability": 7,
+            "robustness": 8,
+            "edge": 7,
+            "security": 8
+          },
+          "one_line": "Correct lenient parser; trailing-cleanup logic convoluted but mostly works."
+        },
+        {
+          "model": "flux-pinned-gpt-5-6-luna",
+          "ok": false
+        },
+        {
+          "model": "flux-pinned-deepseek-v4-pro",
+          "ok": false
+        }
+      ]
+    },
+    "cost": 0.05527964988,
+    "finish": "stop",
+    "via": "openrouter"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "task": "expr_interp",
+    "base_cost": 0.00372,
+    "base": {
+      "visible_pct": 100,
+      "hidden_pct": 93,
+      "judge": 7.62
+    },
+    "tier1": {
+      "visible_pct": 100,
+      "hidden_pct": 93,
+      "judge": 8.25,
+      "add_cost": 0.0
+    },
+    "tier2": {
+      "visible_pct": 100,
+      "hidden_pct": 93,
+      "judge": 7.88,
+      "add_cost": 0.06099,
+      "kept": true
+    },
+    "tier3": {
+      "visible_pct": 100,
+      "hidden_pct": 93,
+      "judge": 8.0,
+      "add_cost": 0.10824,
+      "kept": true,
+      "weak_dim": "edge"
+    }
+  },
+  {
+    "task": "csv_parse",
+    "base_cost": 0.00137,
+    "base": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.75
+    },
+    "tier1": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.88,
+      "add_cost": 0.0
+    },
+    "tier2": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 9.25,
+      "add_cost": 0.03562,
+      "kept": true
+    },
+    "tier3": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 9.12,
+      "add_cost": 0.04203,
+      "kept": true,
+      "weak_dim": "readability"
+    }
+  },
+  {
+    "task": "semver_cmp",
+    "base_cost": 0.00242,
+    "base": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.38
+    },
+    "tier1": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 9.0,
+      "add_cost": 0.0
+    },
+    "tier2": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.5,
+      "add_cost": 0.1044,
+      "kept": true
+    },
+    "tier3": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 9.0,
+      "add_cost": 0.14293,
+      "kept": true,
+      "weak_dim": "edge"
+    }
+  },
+  {
+    "task": "toposort",
+    "base_cost": 0.00117,
+    "base": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 7.0
+    },
+    "tier1": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 7.75,
+      "add_cost": 0.0
+    },
+    "tier2": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.0,
+      "add_cost": 0.04885,
+      "kept": true
+    },
+    "tier3": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 9.25,
+      "add_cost": 0.03904,
+      "kept": true,
+      "weak_dim": "readability"
+    }
+  },
+  {
+    "task": "url_canon",
+    "base_cost": 0.01143,
+    "base": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 6.38
+    },
+    "tier1": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 7.12,
+      "add_cost": 0.0
+    },
+    "tier2": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 8.0,
+      "add_cost": 0.07458,
+      "kept": true
+    },
+    "tier3": {
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "judge": 7.25,
+      "add_cost": 0.12091,
+      "kept": true,
+      "weak_dim": "robustness"
+    }
+  }
+]

@@ -1,0 +1,464 @@
+[
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "expr_interp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.135133,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 3.29,
+        "max_cc": 17,
+        "mi": 25.3,
+        "sloc": 202
+      },
+      "runtime_ms": 205.1
+    },
+    "code": "#!/usr/bin/env python3\n\n\"\"\"Interpreter for a tiny integer expression language.\"\"\"\n\n_KEYWORDS = frozenset({\n    \"False\", \"None\", \"True\", \"and\", \"as\", \"assert\", \"async\", \"await\",\n    \"break\", \"class\", \"continue\", \"def\", \"del\", \"elif\", \"else\", \"except\",\n    \"finally\", \"for\", \"from\", \"global\", \"if\", \"import\", \"in\", \"is\",\n    \"lambda\", \"nonlocal\", \"not\", \"or\", \"pass\", \"raise\", \"return\",\n    \"try\", \"while\", \"with\", \"yield\",\n})\n\n\nclass _InvalidProgram(Exception):\n    pass\n\n\ndef _is_name_start(ch):\n    return (\n        \"A\" <= ch <= \"Z\"\n        or \"a\" <= ch <= \"z\"\n        or ch == \"_\"\n    )\n\n\ndef _is_name_part(ch):\n    return _is_name_start(ch) or \"0\" <= ch <= \"9\"\n\n\ndef _decimal_value(text):\n    value = 0\n    for ch in text:\n        value = value * 10 + (ord(ch) - ord(\"0\"))\n    return value\n\n\ndef _tokenize(src):\n    tokens = []\n    index = 0\n    length = len(src)\n\n    while index < length:\n        ch = src[index]\n\n        if ch in \" \\t\\n\":\n            index += 1\n            continue\n\n        if \"0\" <= ch <= \"9\":\n            start = index\n            index += 1\n            while index < length and \"0\" <= src[index] <= \"9\":\n                index += 1\n            tokens.append((\"INT\", _decimal_value(src[start:index])))\n            continue\n\n        if _is_name_start(ch):\n            start = index\n            index += 1\n            while index < length and _is_name_part(src[index]):\n                index += 1\n            name = src[start:index]\n            if name in _KEYWORDS:\n                raise _InvalidProgram\n            tokens.append((\"NAME\", name))\n            continue\n\n        if ch == \"*\":\n            if index + 1 < length and src[index + 1] == \"*\":\n                tokens.append((\"**\", None))\n                index += 2\n            else:\n                tokens.append((\"*\", None))\n                index += 1\n            continue\n\n        if ch == \"/\":\n            if index + 1 < length and src[index + 1] == \"/\":\n                tokens.append((\"//\", None))\n                index += 2\n            else:\n                raise _InvalidProgram\n            continue\n\n        if ch in \"+-%()=;\":\n            tokens.append((ch, None))\n            index += 1\n            continue\n\n        raise _InvalidProgram\n\n    tokens.append((\"EOF\", None))\n    return tokens\n\n\nclass _Parser:\n    def __init__(self, tokens):\n        self._tokens = tokens\n        self._position = 0\n        self._environment = {}\n\n    def _kind(self):\n        return self._tokens[self._position][0]\n\n    def _value(self):\n        return self._tokens[self._position][1]\n\n    def _advance(self):\n        token = self._tokens[self._position]\n        self._position += 1\n        return token\n\n    def _accept(self, kind):\n        if self._kind() == kind:\n            self._advance()\n            return True\n        return False\n\n    def _require(self, kind):\n        if self._kind() != kind:\n            raise _InvalidProgram\n        return self._advance()\n\n    def _primary(self):\n        kind = self._kind()\n\n        if kind == \"INT\":\n            return self._advance()[1]\n\n        if kind == \"NAME\":\n            name = self._advance()[1]\n            if name not in self._environment:\n                raise _InvalidProgram\n            return self._environment[name]\n\n        if self._accept(\"(\"):\n            if self._kind() == \")\":\n                raise _InvalidProgram\n            value = self._expression()\n            self._require(\")\")\n            return value\n\n        raise _InvalidProgram\n\n    def _power(self):\n        left = self._primary()\n        if self._accept(\"**\"):\n            exponent = self._unary()\n            if exponent < 0:\n                raise _InvalidProgram\n            return left ** exponent\n        return left\n\n    def _unary(self):\n        if self._accept(\"-\"):\n            return -self._unary()\n        return self._power()\n\n    def _multiplicative(self):\n        value = self._unary()\n\n        while self._kind() in (\"*\", \"//\", \"%\"):\n            operator = self._advance()[0]\n            right = self._unary()\n\n            if operator == \"*\":\n                value = value * right\n            elif operator == \"//\":\n                if right == 0:\n                    raise _InvalidProgram\n                value = value // right\n            else:\n                if right == 0:\n                    raise _InvalidProgram\n                value = value % right\n\n        return value\n\n    def _additive(self):\n        value = self._multiplicative()\n\n        while self._kind() in (\"+\", \"-\"):\n            operator = self._advance()[0]\n            right = self._multiplicative()\n            if operator == \"+\":\n                value = value + right\n            else:\n                value = value - right\n\n        return value\n\n    def _expression(self):\n        return self._additive()\n\n    def _statement(self):\n        if (\n            self._kind() == \"NAME\"\n            and self._tokens[self._position + 1][0] == \"=\"\n        ):\n            name = self._advance()[1]\n            self._advance()\n            value = self._expression()\n            self._environment[name] = value\n        else:\n            self._expression()\n\n    def _program(self):\n        while True:\n            while self._accept(\";\"):\n                pass\n\n            if self._kind() == \"EOF\":\n                return dict(self._environment)\n\n            self._statement()\n\n            if self._kind() == \"EOF\":\n                return dict(self._environment)\n            if self._kind() != \";\":\n                raise _InvalidProgram\n\n\ndef run_program(src: str) -> dict | None:\n    \"\"\"Execute *src* and return its final environment, or None if invalid.\"\"\"\n    if not isinstance(src, str):\n        return None\n\n    try:\n        return _Parser(_tokenize(src))._program()\n    except Exception:\n        return None\n"
+  },
+  {
+    "lane": "opus-4-8",
+    "task": "expr_interp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.088384,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 5.32,
+        "max_cc": 22,
+        "mi": 26.8,
+        "sloc": 260
+      },
+      "runtime_ms": 222.9
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Tiny expression language interpreter.\"\"\"\n\n\nclass TokenizeError(Exception):\n    pass\n\n\nclass ParseError(Exception):\n    pass\n\n\nclass EvalError(Exception):\n    pass\n\n\ndef tokenize(src):\n    tokens = []\n    i = 0\n    n = len(src)\n    while i < n:\n        c = src[i]\n        if c in ' \\t\\n\\r':\n            i += 1\n            continue\n        if c.isdigit():\n            j = i\n            while j < n and src[j].isdigit():\n                j += 1\n            tokens.append(('NUM', src[i:j]))\n            i = j\n            continue\n        if c.isalpha() or c == '_':\n            j = i\n            while j < n and (src[j].isalnum() or src[j] == '_'):\n                j += 1\n            tokens.append(('NAME', src[i:j]))\n            i = j\n            continue\n        if c == '*':\n            if i + 1 < n and src[i + 1] == '*':\n                tokens.append(('OP', '**'))\n                i += 2\n            else:\n                tokens.append(('OP', '*'))\n                i += 1\n            continue\n        if c == '/':\n            if i + 1 < n and src[i + 1] == '/':\n                tokens.append(('OP', '//'))\n                i += 2\n            else:\n                raise TokenizeError(\"single slash\")\n            continue\n        if c in '+-%':\n            tokens.append(('OP', c))\n            i += 1\n            continue\n        if c == '(':\n            tokens.append(('LP', '('))\n            i += 1\n            continue\n        if c == ')':\n            tokens.append(('RP', ')'))\n            i += 1\n            continue\n        if c == '=':\n            tokens.append(('EQ', '='))\n            i += 1\n            continue\n        if c == ';':\n            tokens.append(('SEMI', ';'))\n            i += 1\n            continue\n        raise TokenizeError(\"unknown char: %r\" % c)\n    return tokens\n\n\n# AST node types represented as tuples:\n# ('num', int)\n# ('var', name)\n# ('neg', expr)\n# ('bin', op, left, right)\n\n\nclass Parser:\n    def __init__(self, tokens):\n        self.tokens = tokens\n        self.pos = 0\n\n    def peek(self):\n        if self.pos < len(self.tokens):\n            return self.tokens[self.pos]\n        return None\n\n    def next(self):\n        t = self.tokens[self.pos]\n        self.pos += 1\n        return t\n\n    def at_end(self):\n        return self.pos >= len(self.tokens)\n\n    # expr := add\n    def parse_expr(self):\n        return self.parse_add()\n\n    def parse_add(self):\n        left = self.parse_mul()\n        while True:\n            t = self.peek()\n            if t is not None and t[0] == 'OP' and t[1] in ('+', '-'):\n                self.next()\n                right = self.parse_mul()\n                left = ('bin', t[1], left, right)\n            else:\n                break\n        return left\n\n    def parse_mul(self):\n        left = self.parse_unary()\n        while True:\n            t = self.peek()\n            if t is not None and t[0] == 'OP' and t[1] in ('*', '//', '%'):\n                self.next()\n                right = self.parse_unary()\n                left = ('bin', t[1], left, right)\n            else:\n                break\n        return left\n\n    def parse_unary(self):\n        t = self.peek()\n        if t is not None and t[0] == 'OP' and t[1] == '-':\n            self.next()\n            operand = self.parse_unary()\n            return ('neg', operand)\n        return self.parse_power()\n\n    def parse_power(self):\n        base = self.parse_atom()\n        t = self.peek()\n        if t is not None and t[0] == 'OP' and t[1] == '**':\n            self.next()\n            # right operand: unary (allows -) then power right-assoc\n            exp = self.parse_unary()\n            return ('bin', '**', base, exp)\n        return base\n\n    def parse_atom(self):\n        t = self.peek()\n        if t is None:\n            raise ParseError(\"unexpected end\")\n        if t[0] == 'NUM':\n            self.next()\n            return ('num', int(t[1]))\n        if t[0] == 'NAME':\n            self.next()\n            return ('var', t[1])\n        if t[0] == 'LP':\n            self.next()\n            inner = self.parse_expr()\n            nt = self.peek()\n            if nt is None or nt[0] != 'RP':\n                raise ParseError(\"expected )\")\n            self.next()\n            return inner\n        raise ParseError(\"unexpected token: %r\" % (t,))\n\n\ndef parse_statements(tokens):\n    # split by SEMI at top level (semicolons never appear inside expressions)\n    statements = []\n    cur = []\n    for t in tokens:\n        if t[0] == 'SEMI':\n            statements.append(cur)\n            cur = []\n        else:\n            cur.append(t)\n    statements.append(cur)\n    # each element is a list of tokens (may be empty)\n    result = []\n    for stmt_tokens in statements:\n        if len(stmt_tokens) == 0:\n            continue  # empty statement (skip)\n        result.append(parse_one_statement(stmt_tokens))\n    return result\n\n\ndef parse_one_statement(stmt_tokens):\n    # Detect assignment: NAME = ...  where the '=' is the second token\n    # Assignment target must be a bare NAME.\n    # Find first EQ token position.\n    eq_index = None\n    for idx, t in enumerate(stmt_tokens):\n        if t[0] == 'EQ':\n            eq_index = idx\n            break\n    if eq_index is not None:\n        # everything before eq_index must be exactly a single NAME\n        lhs = stmt_tokens[:eq_index]\n        rhs = stmt_tokens[eq_index + 1:]\n        if len(lhs) != 1 or lhs[0][0] != 'NAME':\n            raise ParseError(\"invalid assignment target\")\n        if len(rhs) == 0:\n            raise ParseError(\"empty rhs\")\n        # rhs must not contain another EQ\n        for t in rhs:\n            if t[0] == 'EQ':\n                raise ParseError(\"multiple =\")\n        p = Parser(rhs)\n        expr = p.parse_expr()\n        if not p.at_end():\n            raise ParseError(\"trailing tokens in rhs\")\n        return ('assign', lhs[0][1], expr)\n    else:\n        # bare expression\n        p = Parser(stmt_tokens)\n        expr = p.parse_expr()\n        if not p.at_end():\n            raise ParseError(\"trailing tokens\")\n        return ('expr', expr)\n\n\ndef eval_expr(node, env):\n    kind = node[0]\n    if kind == 'num':\n        return node[1]\n    if kind == 'var':\n        name = node[1]\n        if name not in env:\n            raise EvalError(\"undefined variable: %s\" % name)\n        return env[name]\n    if kind == 'neg':\n        return -eval_expr(node[1], env)\n    if kind == 'bin':\n        op = node[1]\n        left = eval_expr(node[2], env)\n        right = eval_expr(node[3], env)\n        if op == '+':\n            return left + right\n        if op == '-':\n            return left - right\n        if op == '*':\n            return left * right\n        if op == '//':\n            if right == 0:\n                raise EvalError(\"division by zero\")\n            return left // right\n        if op == '%':\n            if right == 0:\n                raise EvalError(\"modulo by zero\")\n            return left % right\n        if op == '**':\n            if right < 0:\n                # negative exponent would produce non-int; treat as error\n                raise EvalError(\"negative exponent\")\n            return left ** right\n        raise EvalError(\"unknown op\")\n    raise EvalError(\"unknown node\")\n\n\ndef run_program(src):\n    if not isinstance(src, str):\n        return None\n    try:\n        tokens = tokenize(src)\n    except TokenizeError:\n        return None\n    try:\n        statements = parse_statements(tokens)\n    except ParseError:\n        return None\n    env = {}\n    try:\n        for stmt in statements:\n            if stmt[0] == 'assign':\n                name = stmt[1]\n                val = eval_expr(stmt[2], env)\n                if not isinstance(val, int):\n                    return None\n                env[name] = val\n            elif stmt[0] == 'expr':\n                val = eval_expr(stmt[1], env)\n                if not isinstance(val, int):\n                    return None\n            else:\n                return None\n    except EvalError:\n        return None\n    return env\n\n\nif __name__ == '__main__':\n    tests = [\n        \"a = 2**3**2; b = a + 1\",\n        \"x = -3; y = 2*-3; z = --2\",\n        \"\",\n        \"  ; ; \",\n        \"1 = 2\",\n        \"a+b = 3\",\n        \"c\",\n        \"1 // 0\",\n        \"(\",\n        \"2 3\",\n    ]\n    for t in tests:\n        print(repr(t), \"->\", run_program(t))\n"
+  },
+  {
+    "lane": "gpt-5-6-luna",
+    "task": "expr_interp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.021502,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 22.0,
+        "max_cc": 22,
+        "mi": 32.0,
+        "sloc": 145
+      },
+      "runtime_ms": 203.6
+    },
+    "code": "#!/usr/bin/env python3\n\ndef run_program(src: str) -> dict | None:\n    class _Invalid(Exception):\n        pass\n\n    try:\n        tokens = []\n        i = 0\n        n = len(src)\n\n        while i < n:\n            c = src[i]\n\n            if c in \" \\t\\n\":\n                i += 1\n                continue\n\n            if \"0\" <= c <= \"9\":\n                start = i\n                i += 1\n                while i < n and \"0\" <= src[i] <= \"9\":\n                    i += 1\n                tokens.append((\"INT\", src[start:i]))\n                continue\n\n            if (\"A\" <= c <= \"Z\") or (\"a\" <= c <= \"z\") or c == \"_\":\n                start = i\n                i += 1\n                while i < n:\n                    ch = src[i]\n                    if (\n                        (\"A\" <= ch <= \"Z\")\n                        or (\"a\" <= ch <= \"z\")\n                        or (\"0\" <= ch <= \"9\")\n                        or ch == \"_\"\n                    ):\n                        i += 1\n                    else:\n                        break\n                tokens.append((\"NAME\", src[start:i]))\n                continue\n\n            if c == \"/\" and i + 1 < n and src[i + 1] == \"/\":\n                tokens.append((\"//\", None))\n                i += 2\n                continue\n\n            if c == \"*\" and i + 1 < n and src[i + 1] == \"*\":\n                tokens.append((\"**\", None))\n                i += 2\n                continue\n\n            if c in \";=+-*%()\":\n                tokens.append((c, None))\n                i += 1\n                continue\n\n            raise _Invalid()\n\n        tokens.append((\"EOF\", None))\n        env = {}\n\n        class _Parser:\n            def __init__(self):\n                self.pos = 0\n\n            def kind(self):\n                return tokens[self.pos][0]\n\n            def take(self, kind):\n                if self.kind() != kind:\n                    raise _Invalid()\n                value = tokens[self.pos][1]\n                self.pos += 1\n                return value\n\n            def parse_integer(self, text):\n                value = 0\n                for ch in text:\n                    value = value * 10 + (ord(ch) - ord(\"0\"))\n                return value\n\n            def parse_expression(self):\n                return self.parse_additive()\n\n            def parse_additive(self):\n                value = self.parse_multiplicative()\n                while self.kind() in (\"+\", \"-\"):\n                    op = self.kind()\n                    self.pos += 1\n                    right = self.parse_multiplicative()\n                    if op == \"+\":\n                        value = value + right\n                    else:\n                        value = value - right\n                return value\n\n            def parse_multiplicative(self):\n                value = self.parse_unary()\n                while self.kind() in (\"*\", \"//\", \"%\"):\n                    op = self.kind()\n                    self.pos += 1\n                    right = self.parse_unary()\n                    if op == \"*\":\n                        value = value * right\n                    elif op == \"//\":\n                        if right == 0:\n                            raise _Invalid()\n                        value = value // right\n                    else:\n                        if right == 0:\n                            raise _Invalid()\n                        value = value % right\n                return value\n\n            def parse_unary(self):\n                if self.kind() == \"-\":\n                    self.pos += 1\n                    return -self.parse_unary()\n                return self.parse_power()\n\n            def parse_power(self):\n                value = self.parse_atom()\n                if self.kind() == \"**\":\n                    self.pos += 1\n                    exponent = self.parse_unary()\n                    if exponent < 0:\n                        raise _Invalid()\n                    value = pow(value, exponent)\n                return value\n\n            def parse_atom(self):\n                kind = self.kind()\n\n                if kind == \"INT\":\n                    text = self.take(\"INT\")\n                    return self.parse_integer(text)\n\n                if kind == \"NAME\":\n                    name = self.take(\"NAME\")\n                    if name not in env:\n                        raise _Invalid()\n                    return env[name]\n\n                if kind == \"(\":\n                    self.pos += 1\n                    value = self.parse_expression()\n                    self.take(\")\")\n                    return value\n\n                raise _Invalid()\n\n            def at_statement_end(self):\n                return self.kind() in (\";\", \"EOF\")\n\n            def parse_program(self):\n                while self.kind() != \"EOF\":\n                    if self.kind() == \";\":\n                        self.pos += 1\n                        continue\n\n                    if (\n                        self.kind() == \"NAME\"\n                        and tokens[self.pos + 1][0] == \"=\"\n                    ):\n                        name = tokens[self.pos][1]\n                        self.pos += 2\n                        value = self.parse_expression()\n                        if not self.at_statement_end():\n                            raise _Invalid()\n                        env[name] = value\n                    else:\n                        self.parse_expression()\n                        if not self.at_statement_end():\n                            raise _Invalid()\n\n                    if self.kind() == \";\":\n                        self.pos += 1\n\n                return env\n\n        return _Parser().parse_program()\n\n    except Exception:\n        return None\n"
+  },
+  {
+    "lane": "anvil-v2",
+    "task": "expr_interp",
+    "ok": false,
+    "err": "TimeoutExpired: gate-first executor subprocess exceeded its 400s budget on this cell (command redacted: it referenced a local private-executor path); recorded as a build failure, cell not regenerated"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "csv_parse",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.061516,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 19.0,
+        "max_cc": 19,
+        "mi": 53.2,
+        "sloc": 49
+      },
+      "runtime_ms": 309.1
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"A small, lenient RFC-4180-style CSV parser implemented without dependencies.\"\"\"\n\n__all__ = [\"parse_csv\"]\n\n\ndef parse_csv(text: str) -> list[list[str]]:\n    \"\"\"Parse CSV text into records of string fields.\"\"\"\n    if text == \"\":\n        return []\n\n    records = []\n    record = []\n    field_chars = []\n\n    # States: 0 = field start, 1 = unquoted, 2 = quoted, 3 = after quote.\n    state = 0\n    i = 0\n    length = len(text)\n\n    while i < length:\n        char = text[i]\n\n        if state == 2:\n            if char == '\"':\n                if i + 1 < length and text[i + 1] == '\"':\n                    field_chars.append('\"')\n                    i += 2\n                else:\n                    state = 3\n                    i += 1\n            else:\n                field_chars.append(char)\n                i += 1\n            continue\n\n        if char == \",\":\n            record.append(\"\".join(field_chars))\n            field_chars = []\n            state = 0\n            i += 1\n            continue\n\n        if char == \"\\n\" or (\n            char == \"\\r\" and i + 1 < length and text[i + 1] == \"\\n\"\n        ):\n            record.append(\"\".join(field_chars))\n            records.append(record)\n            record = []\n            field_chars = []\n            state = 0\n            i += 2 if char == \"\\r\" else 1\n            continue\n\n        if state == 0 and char == '\"':\n            state = 2\n        else:\n            field_chars.append(char)\n            if state == 0:\n                state = 1\n\n        i += 1\n\n    if record or field_chars or state != 0:\n        record.append(\"\".join(field_chars))\n        records.append(record)\n\n    return records\n"
+  },
+  {
+    "lane": "opus-4-8",
+    "task": "csv_parse",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 92,
+    "cost": 0.038024,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 30.0,
+        "max_cc": 30,
+        "mi": 46.7,
+        "sloc": 107
+      },
+      "runtime_ms": 250.2
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"RFC-4180-style CSV parser implemented without the csv module.\"\"\"\n\n\ndef parse_csv(text: str) -> list[list[str]]:\n    if text == \"\":\n        return []\n\n    records: list[list[str]] = []\n    field_chars: list[str] = []\n    fields: list[str] = []\n    i = 0\n    n = len(text)\n\n    def end_field():\n        fields.append(\"\".join(field_chars))\n        field_chars.clear()\n\n    def end_record():\n        end_field()\n        records.append(fields.copy())\n        fields.clear()\n\n    while i < n:\n        c = text[i]\n\n        if c == '\"':\n            # Quoted field\n            i += 1\n            while i < n:\n                ch = text[i]\n                if ch == '\"':\n                    if i + 1 < n and text[i + 1] == '\"':\n                        field_chars.append('\"')\n                        i += 2\n                    else:\n                        # closing quote\n                        i += 1\n                        break\n                else:\n                    field_chars.append(ch)\n                    i += 1\n            # After closing quote, lenient: append literal content until sep\n            while i < n:\n                ch = text[i]\n                if ch == ',':\n                    break\n                if ch == '\\n':\n                    break\n                if ch == '\\r':\n                    break\n                if ch == '\"':\n                    # start of another quoted segment; handle inline\n                    i += 1\n                    while i < n:\n                        c2 = text[i]\n                        if c2 == '\"':\n                            if i + 1 < n and text[i + 1] == '\"':\n                                field_chars.append('\"')\n                                i += 2\n                            else:\n                                i += 1\n                                break\n                        else:\n                            field_chars.append(c2)\n                            i += 1\n                    continue\n                field_chars.append(ch)\n                i += 1\n            # now at comma, separator, or end\n            if i < n:\n                sep = text[i]\n                if sep == ',':\n                    end_field()\n                    i += 1\n                elif sep == '\\r':\n                    end_record()\n                    if i + 1 < n and text[i + 1] == '\\n':\n                        i += 2\n                    else:\n                        i += 1\n                elif sep == '\\n':\n                    end_record()\n                    i += 1\n            else:\n                # end of input\n                end_record()\n\n        elif c == ',':\n            end_field()\n            i += 1\n\n        elif c == '\\r':\n            end_record()\n            if i + 1 < n and text[i + 1] == '\\n':\n                i += 2\n            else:\n                i += 1\n\n        elif c == '\\n':\n            end_record()\n            i += 1\n\n        else:\n            field_chars.append(c)\n            i += 1\n\n    # Handle trailing content not terminated by a record separator.\n    if field_chars or fields:\n        end_record()\n\n    return records\n\n\nif __name__ == \"__main__\":\n    tests = [\n        (\"\", []),\n        (\"a,b\\n\", [[\"a\", \"b\"]]),\n        (\"a,b\\r\\nc,d\", [[\"a\", \"b\"], [\"c\", \"d\"]]),\n        (\"a,\\n\", [[\"a\", \"\"]]),\n        (\"x\\n\\ny\", [[\"x\"], [\"\"], [\"y\"]]),\n        ('\"a\"b', [[\"ab\"]]),\n        ('\"he said \"\"hi\"\"\",x', [['he said \"hi\"', \"x\"]]),\n        ('\"unclosed', [[\"unclosed\"]]),\n        ('\"multi\\nline\",z', [[\"multi\\nline\", \"z\"]]),\n        (\" a , b \", [[\" a \", \" b \"]]),\n    ]\n    for src, expected in tests:\n        got = parse_csv(src)\n        status = \"OK\" if got == expected else \"FAIL\"\n        print(f\"{status}: {src!r} -> {got!r}\")\n"
+  },
+  {
+    "lane": "gpt-5-6-luna",
+    "task": "csv_parse",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.013378,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 16.0,
+        "max_cc": 16,
+        "mi": 53.9,
+        "sloc": 51
+      },
+      "runtime_ms": 260.8
+    },
+    "code": "#!/usr/bin/env python3\n\ndef parse_csv(text: str) -> list[list[str]]:\n    records = []\n    record = []\n    field = []\n    mode = None  # None, \"unquoted\", \"quoted\", or \"closed\"\n    pending = False\n    i = 0\n    length = len(text)\n\n    while i < length:\n        char = text[i]\n\n        if mode == \"quoted\":\n            if char == '\"':\n                if i + 1 < length and text[i + 1] == '\"':\n                    field.append('\"')\n                    i += 2\n                else:\n                    mode = \"closed\"\n                    i += 1\n            else:\n                field.append(char)\n                i += 1\n            continue\n\n        if char == ',':\n            record.append(\"\".join(field))\n            field = []\n            mode = None\n            pending = True\n            i += 1\n            continue\n\n        if char == '\\n' or (char == '\\r' and i + 1 < length and text[i + 1] == '\\n'):\n            record.append(\"\".join(field))\n            records.append(record)\n            record = []\n            field = []\n            mode = None\n            pending = False\n            i += 2 if char == '\\r' else 1\n            continue\n\n        if mode is None and char == '\"':\n            mode = \"quoted\"\n            pending = True\n        else:\n            if mode is None:\n                mode = \"unquoted\"\n            field.append(char)\n            pending = True\n\n        i += 1\n\n    if pending:\n        record.append(\"\".join(field))\n        records.append(record)\n\n    return records\n"
+  },
+  {
+    "lane": "anvil-v2",
+    "task": "csv_parse",
+    "ok": false,
+    "err": "TimeoutExpired: gate-first executor subprocess exceeded its 400s budget on this cell (command redacted: it referenced a local private-executor path); recorded as a build failure, cell not regenerated"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.091845,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 7.86,
+        "max_cc": 18,
+        "mi": 34.3,
+        "sloc": 106
+      },
+      "runtime_ms": 177.4
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Semantic Versioning 2.0.0 validation and precedence comparison.\"\"\"\n\n__all__ = (\"is_valid\", \"compare\")\n\n\ndef _is_ascii_digits(value: str) -> bool:\n    if not value:\n        return False\n    for char in value:\n        if char < \"0\" or char > \"9\":\n            return False\n    return True\n\n\ndef _is_identifier(value: str) -> bool:\n    if not value:\n        return False\n    for char in value:\n        if not (\n            \"0\" <= char <= \"9\"\n            or \"A\" <= char <= \"Z\"\n            or \"a\" <= char <= \"z\"\n            or char == \"-\"\n        ):\n            return False\n    return True\n\n\ndef _parse(value: str):\n    if not isinstance(value, str):\n        return None\n\n    build_parts = str.split(value, \"+\")\n    if len(build_parts) > 2:\n        return None\n\n    main = build_parts[0]\n    if len(build_parts) == 2:\n        build = build_parts[1]\n        identifiers = str.split(build, \".\")\n        for identifier in identifiers:\n            if not _is_identifier(identifier):\n                return None\n\n    prerelease_parts = str.split(main, \"-\", 1)\n    core = prerelease_parts[0]\n    prerelease = None\n\n    if len(prerelease_parts) == 2:\n        prerelease_text = prerelease_parts[1]\n        identifiers = str.split(prerelease_text, \".\")\n        for identifier in identifiers:\n            if not _is_identifier(identifier):\n                return None\n            if (\n                _is_ascii_digits(identifier)\n                and len(identifier) > 1\n                and identifier[0] == \"0\"\n            ):\n                return None\n        prerelease = tuple(identifiers)\n\n    core_parts = str.split(core, \".\")\n    if len(core_parts) != 3:\n        return None\n\n    for identifier in core_parts:\n        if not _is_ascii_digits(identifier):\n            return None\n        if len(identifier) > 1 and identifier[0] == \"0\":\n            return None\n\n    return tuple(core_parts), prerelease\n\n\ndef _safe_parse(value):\n    try:\n        return _parse(value)\n    except BaseException:\n        return None\n\n\ndef _compare_numeric(left: str, right: str) -> int:\n    if len(left) < len(right):\n        return -1\n    if len(left) > len(right):\n        return 1\n    if left < right:\n        return -1\n    if left > right:\n        return 1\n    return 0\n\n\ndef is_valid(v: str) -> bool:\n    \"\"\"Return whether v exactly matches the Semantic Versioning 2.0.0 grammar.\"\"\"\n    return _safe_parse(v) is not None\n\n\ndef compare(a: str, b: str) -> int:\n    \"\"\"Compare two valid semantic versions by SemVer precedence.\"\"\"\n    parsed_a = _safe_parse(a)\n    parsed_b = _safe_parse(b)\n\n    if parsed_a is None or parsed_b is None:\n        raise ValueError(\"invalid semantic version\")\n\n    core_a, prerelease_a = parsed_a\n    core_b, prerelease_b = parsed_b\n\n    for identifier_a, identifier_b in zip(core_a, core_b):\n        result = _compare_numeric(identifier_a, identifier_b)\n        if result:\n            return result\n\n    if prerelease_a is None:\n        return 0 if prerelease_b is None else 1\n    if prerelease_b is None:\n        return -1\n\n    common_length = min(len(prerelease_a), len(prerelease_b))\n    for index in range(common_length):\n        identifier_a = prerelease_a[index]\n        identifier_b = prerelease_b[index]\n\n        if identifier_a == identifier_b:\n            continue\n\n        numeric_a = _is_ascii_digits(identifier_a)\n        numeric_b = _is_ascii_digits(identifier_b)\n\n        if numeric_a and numeric_b:\n            result = _compare_numeric(identifier_a, identifier_b)\n            if result:\n                return result\n        elif numeric_a:\n            return -1\n        elif numeric_b:\n            return 1\n        elif identifier_a < identifier_b:\n            return -1\n        else:\n            return 1\n\n    if len(prerelease_a) < len(prerelease_b):\n        return -1\n    if len(prerelease_a) > len(prerelease_b):\n        return 1\n    return 0\n"
+  },
+  {
+    "lane": "opus-4-8",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.039804,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 6.5,
+        "max_cc": 11,
+        "mi": 44.7,
+        "sloc": 94
+      },
+      "runtime_ms": 150.0
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Semantic Versioning 2.0.0 validity and precedence.\"\"\"\n\n\ndef _is_numeric_no_leading_zero(s: str) -> bool:\n    if not s or not s.isdigit():\n        return False\n    if len(s) > 1 and s[0] == '0':\n        return False\n    return True\n\n\ndef _is_valid_build_id(s: str) -> bool:\n    if not s:\n        return False\n    return all(c.isdigit() or c.isalpha() or c == '-' for c in s)\n\n\ndef _is_valid_prerelease_id(s: str) -> bool:\n    if not s:\n        return False\n    if not all(c.isdigit() or c.isalpha() or c == '-' for c in s):\n        return False\n    # if all digits, must have no leading zero\n    if s.isdigit():\n        return _is_numeric_no_leading_zero(s)\n    return True\n\n\ndef _parse(v: str):\n    \"\"\"Parse into (major, minor, patch, prerelease_ids_or_None, build_or_None).\n    Returns None if invalid.\"\"\"\n    if not isinstance(v, str):\n        return None\n\n    build = None\n    plus = v.find('+')\n    if plus != -1:\n        build_str = v[plus + 1:]\n        v = v[:plus]\n        build_ids = build_str.split('.')\n        for b in build_ids:\n            if not _is_valid_build_id(b):\n                return None\n        build = build_ids\n\n    prerelease = None\n    dash = v.find('-')\n    if dash != -1:\n        pre_str = v[dash + 1:]\n        v = v[:dash]\n        pre_ids = pre_str.split('.')\n        for p in pre_ids:\n            if not _is_valid_prerelease_id(p):\n                return None\n        prerelease = pre_ids\n\n    parts = v.split('.')\n    if len(parts) != 3:\n        return None\n    for p in parts:\n        if not _is_numeric_no_leading_zero(p):\n            return None\n    major, minor, patch = (int(parts[0]), int(parts[1]), int(parts[2]))\n\n    return (major, minor, patch, prerelease, build)\n\n\ndef is_valid(v: str) -> bool:\n    return _parse(v) is not None\n\n\ndef _cmp_int(a: int, b: int) -> int:\n    if a < b:\n        return -1\n    if a > b:\n        return 1\n    return 0\n\n\ndef _cmp_pre_id(a: str, b: str) -> int:\n    a_num = a.isdigit()\n    b_num = b.isdigit()\n    if a_num and b_num:\n        return _cmp_int(int(a), int(b))\n    if a_num and not b_num:\n        return -1\n    if b_num and not a_num:\n        return 1\n    # both alphanumeric, ASCII lexical\n    if a < b:\n        return -1\n    if a > b:\n        return 1\n    return 0\n\n\ndef compare(a: str, b: str) -> int:\n    pa = _parse(a)\n    pb = _parse(b)\n    if pa is None or pb is None:\n        raise ValueError(\"invalid version string\")\n\n    for i in range(3):\n        c = _cmp_int(pa[i], pb[i])\n        if c != 0:\n            return c\n\n    pre_a = pa[3]\n    pre_b = pb[3]\n\n    # no prerelease has higher precedence\n    if pre_a is None and pre_b is None:\n        return 0\n    if pre_a is None:\n        return 1\n    if pre_b is None:\n        return -1\n\n    n = min(len(pre_a), len(pre_b))\n    for i in range(n):\n        c = _cmp_pre_id(pre_a[i], pre_b[i])\n        if c != 0:\n            return c\n\n    return _cmp_int(len(pre_a), len(pre_b))\n"
+  },
+  {
+    "lane": "gpt-5-6-luna",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible_pct": 97,
+    "hidden_pct": 100,
+    "cost": 0.010385,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 6.56,
+        "max_cc": 21,
+        "mi": 35.0,
+        "sloc": 99
+      },
+      "runtime_ms": 301.6
+    },
+    "code": "#!/usr/bin/env python3\n\n_DIGITS = frozenset(\"0123456789\")\n_IDENTIFIER_CHARS = frozenset(\n    \"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-\"\n)\n\n\ndef _is_numeric_identifier(value: str) -> bool:\n    return bool(value) and all(char in _DIGITS for char in value)\n\n\ndef _is_valid_numeric(value: str) -> bool:\n    return bool(value) and all(char in _DIGITS for char in value) and (\n        value == \"0\" or value[0] != \"0\"\n    )\n\n\ndef _is_valid_core(value: str) -> bool:\n    return _is_valid_numeric(value)\n\n\ndef _is_valid_prerelease_identifier(value: str) -> bool:\n    if not value or not all(char in _IDENTIFIER_CHARS for char in value):\n        return False\n    if _is_numeric_identifier(value):\n        return _is_valid_numeric(value)\n    return True\n\n\ndef _is_valid_build_identifier(value: str) -> bool:\n    return bool(value) and all(char in _IDENTIFIER_CHARS for char in value)\n\n\ndef _parse(value: str):\n    if not isinstance(value, str):\n        return None\n\n    if value.count(\"+\") > 1:\n        return None\n\n    if \"+\" in value:\n        main, build = value.split(\"+\", 1)\n        build_parts = build.split(\".\")\n        if not all(_is_valid_build_identifier(part) for part in build_parts):\n            return None\n    else:\n        main = value\n\n    if main.count(\"-\") > 1:\n        return None\n\n    if \"-\" in main:\n        core_text, prerelease_text = main.split(\"-\", 1)\n        prerelease_parts = prerelease_text.split(\".\")\n        if not all(\n            _is_valid_prerelease_identifier(part) for part in prerelease_parts\n        ):\n            return None\n    else:\n        core_text = main\n        prerelease_parts = None\n\n    core_parts = core_text.split(\".\")\n    if len(core_parts) != 3:\n        return None\n    if not all(_is_valid_core(part) for part in core_parts):\n        return None\n\n    return core_parts[0], core_parts[1], core_parts[2], prerelease_parts\n\n\ndef is_valid(v: str) -> bool:\n    \"\"\"Return whether v is a valid Semantic Version 2.0.0 string.\"\"\"\n    return _parse(v) is not None\n\n\ndef _compare_numeric_strings(left: str, right: str) -> int:\n    left = left.lstrip(\"0\") or \"0\"\n    right = right.lstrip(\"0\") or \"0\"\n\n    if len(left) < len(right):\n        return -1\n    if len(left) > len(right):\n        return 1\n    if left < right:\n        return -1\n    if left > right:\n        return 1\n    return 0\n\n\ndef compare(a: str, b: str) -> int:\n    \"\"\"Compare two valid Semantic Versions by precedence.\"\"\"\n    parsed_a = _parse(a)\n    parsed_b = _parse(b)\n\n    if parsed_a is None or parsed_b is None:\n        raise ValueError(\"invalid semantic version\")\n\n    for index in range(3):\n        result = _compare_numeric_strings(parsed_a[index], parsed_b[index])\n        if result:\n            return result\n\n    pre_a = parsed_a[3]\n    pre_b = parsed_b[3]\n\n    if pre_a is None and pre_b is None:\n        return 0\n    if pre_a is None:\n        return 1\n    if pre_b is None:\n        return -1\n\n    for identifier_a, identifier_b in zip(pre_a, pre_b):\n        numeric_a = _is_numeric_identifier(identifier_a)\n        numeric_b = _is_numeric_identifier(identifier_b)\n\n        if numeric_a and numeric_b:\n            result = _compare_numeric_strings(identifier_a, identifier_b)\n        elif numeric_a and not numeric_b:\n            result = -1\n        elif not numeric_a and numeric_b:\n            result = 1\n        elif identifier_a < identifier_b:\n            result = -1\n        elif identifier_a > identifier_b:\n            result = 1\n        else:\n            result = 0\n\n        if result:\n            return result\n\n    if len(pre_a) < len(pre_b):\n        return -1\n    if len(pre_a) > len(pre_b):\n        return 1\n    return 0\n"
+  },
+  {
+    "lane": "anvil-v2",
+    "task": "semver_cmp",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.002373,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 7.69,
+        "max_cc": 15,
+        "mi": 41.4,
+        "sloc": 166
+      },
+      "runtime_ms": 181.5
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Semantic Versioning 2.0.0 implementation (stdlib only).\"\"\"\n\n__all__ = [\"is_valid\", \"compare\"]\n\n\n# Allowed characters in identifiers: digits, ASCII letters, and hyphen.\n_ALLOWED_ID_CHARS = set(\"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-\")\n\n\ndef _is_digits(s: str) -> bool:\n    \"\"\"Return True iff `s` is non-empty and every char is an ASCII digit.\"\"\"\n    if not s:\n        return False\n    for ch in s:\n        if ch < '0' or ch > '9':\n            return False\n    return True\n\n\ndef _is_valid_numeric_id(s: str) -> bool:\n    \"\"\"A numeric identifier: non-empty digits, no leading zeros unless '0'.\"\"\"\n    if not s:\n        return False\n    if not _is_digits(s):\n        return False\n    if len(s) > 1 and s[0] == '0':\n        return False\n    return True\n\n\ndef _is_valid_alphanumeric_id(s: str) -> bool:\n    \"\"\"An alphanumeric identifier: non-empty, only [0-9A-Za-z-], not numeric (no leading zero).\"\"\"\n    if not s:\n        return False\n    for ch in s:\n        if ch not in _ALLOWED_ID_CHARS:\n            return False\n    # If all characters are digits, it must satisfy the numeric no-leading-zeros rule.\n    if _is_digits(s):\n        if len(s) > 1 and s[0] == '0':\n            return False\n    return True\n\n\ndef _split_build(v: str):\n    \"\"\"Split off the build metadata after '+'. Returns (rest, build_or_None).\n\n    Build metadata is everything after the first '+'. If a '+' is present\n    but no characters follow, that's an invalid build (empty identifier).\n    Multiple '+' characters are not allowed by SemVer; only the first splits.\n    \"\"\"\n    idx = v.find('+')\n    if idx == -1:\n        return v, None\n    rest = v[:idx]\n    build = v[idx + 1:]\n    # Per spec, build metadata follows the single '+'; the remaining '+' chars\n    # would be part of an identifier and are forbidden by [0-9A-Za-z-].\n    # So reject any further '+' in the build portion.\n    if '+' in build:\n        return None, None\n    if not build:\n        # Empty build identifier -> invalid.\n        return None, None\n    return rest, build\n\n\ndef _split_prerelease(v: str):\n    \"\"\"Split off the prerelease after '-'. Returns (core, pre_or_None).\n\n    Only the first '-' introduces the prerelease; subsequent '-' belong to\n    identifiers which are allowed to contain '-'. A leading '-' on an empty\n    identifier (e.g. '1.0.0-') makes the version invalid.\n    \"\"\"\n    idx = v.find('-')\n    if idx == -1:\n        return v, None\n    core = v[:idx]\n    pre = v[idx + 1:]\n    if not pre:\n        return None, None\n    return core, pre\n\n\ndef _check_core(core: str):\n    \"\"\"Validate the 'major.minor.patch' portion. Returns (parts, ok).\"\"\"\n    pieces = core.split('.')\n    if len(pieces) != 3:\n        return None, False\n    parts = []\n    for p in pieces:\n        if not _is_valid_numeric_id(p):\n            return None, False\n        parts.append(int(p))\n    return parts, True\n\n\ndef _check_idents(blob: str, allow_numeric_no_leading_zero: bool):\n    \"\"\"Check a dot-separated list of identifiers.\n\n    `allow_numeric_no_leading_zero`:\n      False -> build-style: any non-empty [0-9A-Za-z-] identifier is fine.\n      True  -> prerelease-style: numeric ids must not have leading zeros\n               (unless a single '0'); alphanumeric ids are fine as-is and\n               may incidentally be all-digit but then must obey the rule.\n    Returns list of idents (strings) on success, or None on failure.\n    \"\"\"\n    if not blob:\n        return None\n    idents = blob.split('.')\n    for ident in idents:\n        if not ident:\n            return None\n        for ch in ident:\n            if ch not in _ALLOWED_ID_CHARS:\n                return None\n        if allow_numeric_no_leading_zero:\n            if not _is_valid_alphanumeric_id(ident):\n                return None\n        # else: accept as long as chars are allowed and non-empty.\n    return idents\n\n\ndef is_valid(v: str) -> bool:\n    \"\"\"Return True iff `v` is a strict SemVer 2.0.0 version string.\"\"\"\n    if not isinstance(v, str) or not v:\n        return False\n\n    # Pull off optional build metadata.\n    rest, build = _split_build(v)\n    if rest is None and build is None and '+' in v:\n        return False\n\n    # Pull off optional prerelease.\n    core, pre = _split_prerelease(rest)\n    if core is None and pre is None and '-' in rest:\n        return False\n\n    parts, ok = _check_core(core)\n    if not ok:\n        return False\n\n    if pre is not None:\n        if _check_idents(pre, allow_numeric_no_leading_zero=True) is None:\n            return False\n\n    if build is not None:\n        if _check_idents(build, allow_numeric_no_leading_zero=False) is None:\n            return False\n\n    return True\n\n\ndef _parse(v: str):\n    \"\"\"Parse and validate `v`, returning a tuple usable for comparison.\n\n    Returns a dict-like tuple on success, or None if invalid.\n    Layout: (major, minor, patch, has_prerelease: bool, pre_idents: tuple, build_idents: tuple)\n    \"\"\"\n    if not isinstance(v, str) or not v:\n        return None\n\n    rest, build = _split_build(v)\n    if rest is None and build is None and '+' in v:\n        return None\n\n    core, pre = _split_prerelease(rest)\n    if core is None and pre is None and '-' in rest:\n        return None\n\n    parts, ok = _check_core(core)\n    if not ok:\n        return None\n\n    pre_idents = ()\n    has_pre = False\n    if pre is not None:\n        pre_idents = _check_idents(pre, allow_numeric_no_leading_zero=True)\n        if pre_idents is None:\n            return None\n        has_pre = True\n\n    build_idents = ()\n    if build is not None:\n        build_idents = _check_idents(build, allow_numeric_no_leading_zero=False)\n        if build_idents is None:\n            return None\n\n    return (parts[0], parts[1], parts[2], has_pre, pre_idents, build_idents)\n\n\ndef _id_kind(ident: str) -> str:\n    \"\"\"Return 'num' iff `ident` is purely ASCII digits, else 'alphanum'.\"\"\"\n    if _is_digits(ident):\n        return 'num'\n    return 'alphanum'\n\n\ndef _compare_idents(a: str, b: str) -> int:\n    \"\"\"Compare two prerelease identifiers per SemVer precedence rules.\"\"\"\n    ka = _id_kind(a)\n    kb = _id_kind(b)\n    if ka == 'num' and kb == 'num':\n        # Numeric vs numeric: compare as integers. Use length then lexicographic\n        # to avoid int overflow surprises with arbitrarily long digit strings;\n        # for valid prerelease numerics there are no leading zeros, so length\n        # comparison suffices, and equal lengths means lexicographic works.\n        if len(a) != len(b):\n            return -1 if len(a) < len(b) else 1\n        if a == b:\n            return 0\n        return -1 if a < b else 1\n    if ka == 'num' and kb == 'alphanum':\n        return -1\n    if ka == 'alphanum' and kb == 'num':\n        return 1\n    # Both alphanumeric: ASCII lexical compare.\n    if a == b:\n        return 0\n    return -1 if a < b else 1\n\n\ndef _compare_pre(a, b):\n    \"\"\"Compare prerelease identifier tuples; return -1/0/1.\"\"\"\n    n = len(a) if len(a) < len(b) else len(b)\n    for i in range(n):\n        c = _compare_idents(a[i], b[i])\n        if c != 0:\n            return c\n    if len(a) == len(b):\n        return 0\n    # Larger set of fields has higher precedence.\n    return -1 if len(a) < len(b) else 1\n\n\ndef compare(a: str, b: str) -> int:\n    \"\"\"Compare two SemVer version strings. Returns -1, 0, or 1.\n\n    Raises ValueError if either argument is not a valid SemVer version.\n    Build metadata is ignored for precedence.\n    \"\"\"\n    pa = _parse(a)\n    if pa is None:\n        raise ValueError(f\"not a valid semantic version: {a!r}\")\n    pb = _parse(b)\n    if pb is None:\n        raise ValueError(f\"not a valid semantic version: {b!r}\")\n\n    am, an, ap, ahas, apre, _abuild = pa\n    bm, bn, bp, bhas, bpre, _bbuild = pb\n\n    if am != bm:\n        return -1 if am < bm else 1\n    if an != bn:\n        return -1 if an < bn else 1\n    if ap != bp:\n        return -1 if ap < bp else 1\n\n    # Major.minor.patch equal. Now handle prerelease precedence.\n    if not ahas and not bhas:\n        return 0\n    if ahas and not bhas:\n        # a has prerelease -> lower precedence.\n        return -1\n    if not ahas and bhas:\n        return 1\n    # Both have prerelease.\n    return _compare_pre(apre, bpre)\n"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "toposort",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.016447,
+    "profile": {
+      "fmt_changed": false,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 12.0,
+        "max_cc": 12,
+        "mi": 67.5,
+        "sloc": 25
+      },
+      "runtime_ms": 59.5
+    },
+    "code": "#!/usr/bin/env python3\n\nimport heapq as _heapq\n\n\ndef toposort(graph: dict) -> list | None:\n    \"\"\"Return the deterministic dependency order, or None if a cycle exists.\"\"\"\n    nodes = set(graph)\n    dependencies = {}\n\n    for node, deps in graph.items():\n        unique_deps = set(deps)\n        dependencies[node] = unique_deps\n        nodes.update(unique_deps)\n\n    indegree = {node: 0 for node in nodes}\n    dependents = {node: set() for node in nodes}\n\n    for node, deps in dependencies.items():\n        indegree[node] = len(deps)\n        for dependency in deps:\n            dependents[dependency].add(node)\n\n    eligible = [node for node in nodes if indegree[node] == 0]\n    _heapq.heapify(eligible)\n\n    order = []\n\n    while eligible:\n        node = _heapq.heappop(eligible)\n        order.append(node)\n\n        for dependent in dependents[node]:\n            indegree[dependent] -= 1\n            if indegree[dependent] == 0:\n                _heapq.heappush(eligible, dependent)\n\n    return order if len(order) == len(nodes) else None\n"
+  },
+  {
+    "lane": "opus-4-8",
+    "task": "toposort",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.016626,
+    "profile": {
+      "fmt_changed": false,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 15.0,
+        "max_cc": 15,
+        "mi": 71.1,
+        "sloc": 33
+      },
+      "runtime_ms": 57.7
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Deterministic topological sort by dependency order.\"\"\"\n\nimport heapq\n\n\ndef toposort(graph: dict) -> list | None:\n    # Collect all nodes (keys and dependencies).\n    nodes = set()\n    deps = {}\n    for node, dependencies in graph.items():\n        nodes.add(node)\n        dset = set()\n        for d in dependencies:\n            nodes.add(d)\n            dset.add(d)\n        deps[node] = dset\n\n    # Ensure every node has a dependency set.\n    for n in nodes:\n        if n not in deps:\n            deps[n] = set()\n\n    # dependents: for each node, who depends on it.\n    dependents = {n: [] for n in nodes}\n    indegree = {n: 0 for n in nodes}\n    for node, dset in deps.items():\n        indegree[node] = len(dset)\n        for d in dset:\n            dependents[d].append(node)\n\n    heap = [n for n in nodes if indegree[n] == 0]\n    heapq.heapify(heap)\n\n    result = []\n    while heap:\n        n = heapq.heappop(heap)\n        result.append(n)\n        for m in dependents[n]:\n            indegree[m] -= 1\n            if indegree[m] == 0:\n                heapq.heappush(heap, m)\n\n    if len(result) != len(nodes):\n        return None\n    return result\n"
+  },
+  {
+    "lane": "gpt-5-6-luna",
+    "task": "toposort",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.005097,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 8.0,
+        "max_cc": 8,
+        "mi": 72.0,
+        "sloc": 22
+      },
+      "runtime_ms": 908.3
+    },
+    "code": "#!/usr/bin/env python3\n\ndef toposort(graph: dict) -> list | None:\n    dependencies = {}\n    nodes = set()\n\n    for node, required in graph.items():\n        nodes.add(node)\n        dependencies.setdefault(node, set())\n        for dependency in required:\n            nodes.add(dependency)\n            dependencies.setdefault(dependency, set())\n            dependencies[node].add(dependency)\n\n    emitted = set()\n    order = []\n\n    while len(order) < len(nodes):\n        eligible = [\n            node\n            for node in nodes\n            if node not in emitted and dependencies[node].issubset(emitted)\n        ]\n\n        if not eligible:\n            return None\n\n        node = min(eligible)\n        emitted.add(node)\n        order.append(node)\n\n    return order\n"
+  },
+  {
+    "lane": "anvil-v2",
+    "task": "toposort",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.001153,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 1,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 24.0,
+        "max_cc": 24,
+        "mi": 69.3,
+        "sloc": 62
+      },
+      "runtime_ms": 111.3
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"\nTopological sort with deterministic tie-breaking.\n\nImplements Kahn's algorithm with lexical tie-breaking. Handles implicit nodes\n(nodes referenced in dependency lists but absent as keys), deduplicates\ndependencies, detects cycles including self-loops, and returns None for any\ncycle. Empty graph returns [].\n\"\"\"\n\nfrom typing import Dict, List, Optional\n\n\ndef toposort(graph: Dict[str, List[str]]) -> Optional[List[str]]:\n    # Collect every node referenced anywhere (as key or in any dependency list).\n    nodes = set(graph.keys())\n    for deps in graph.values():\n        for d in deps:\n            nodes.add(d)\n\n    # Deduplicate dependency lists using sets; also canonicalizes lex order.\n    deps_map: Dict[str, List[str]] = {}\n    for n in nodes:\n        raw = graph.get(n, [])\n        # Deduplicate while preserving nothing about original order.\n        deps_map[n] = sorted(set(raw))\n\n    # In-degree counting over all dependency edges, deduplicated.\n    # For Kahn's to work correctly with our direction: an edge in deps_map\n    # is (n -> d) meaning \"n depends on d\", so d has in-degree += 1 from n.\n    in_degree: Dict[str, int] = {n: 0 for n in nodes}\n    # Multi-set of dependents per node, for decrementing in-degree when emitted.\n    # Built from the dependency relation (deps_map).\n    dependents: Dict[str, List[str]] = {n: [] for n in nodes}\n    seen_edges: set = set()\n    for n, ds in deps_map.items():\n        for d in ds:\n            if (n, d) in seen_edges:\n                continue\n            seen_edges.add((n, d))\n            in_degree[n] += 1\n            dependents[d].append(n)\n\n    # Use a sorted structure for deterministic retrieval of minimal element.\n    # Since Python's heapq doesn't support decrease-key cleanly here and we\n    # need true minimal string tie-break, use a sorted set via bisect.\n    from bisect import insort\n    from typing import List as _List  # local alias to avoid shadowing\n\n    ready: _List[str] = []  # always maintained in ascending string order\n\n    def add_ready(x: str) -> None:\n        # Insert x into `ready` maintaining ascending order, ignoring dups.\n        import bisect\n        i = bisect.bisect_left(ready, x)\n        if i == len(ready) or ready[i] != x:\n            ready.insert(i, x)\n\n    for n in nodes:\n        if in_degree[n] == 0:\n            add_ready(n)\n\n    result: List[str] = []\n    emitted: set = set()\n\n    # Helper: fetch and remove the smallest ready node. Since ready is sorted,\n    # we pop from the end (pop last is O(1)) but we need the smallest, so pop(0).\n    # To avoid O(n) pop(0) on large graphs, we could use heapq with a tie-break,\n    # but lexical comparison on str is already total. We'll use heapq with a\n    # counter to handle duplicate \"logical\" inserts \u2014 but since we deduplicate\n    # via `add_ready`, duplicates won't exist. Lexical str ordering suffices.\n\n    # Re-implement ready as a heap with lexical tie-break (already lexical).\n    import heapq\n    heap: List[str] = []\n    for n in nodes:\n        if in_degree[n] == 0:\n            heapq.heappush(heap, n)\n\n    # Local references for speed / clarity.\n    f_dependents = dependents\n    f_in_degree = in_degree\n\n    while heap:\n        # Pop the lex-smallest among nodes currently with in-degree 0.\n        # heapq gives the min-heap property over natural str ordering.\n        n = heapq.heappop(heap)\n        if n in emitted:\n            continue\n        # Defensive: skip stale entries if in_degree was modified externally.\n        if f_in_degree[n] != 0:\n            continue\n        result.append(n)\n        emitted.add(n)\n        for dep in f_dependents[n]:\n            f_in_degree[dep] -= 1\n            if f_in_degree[dep] == 0:\n                heapq.heappush(heap, dep)\n\n    # Cycle detection: if not all nodes emitted, there's a cycle.\n    if len(result) != len(nodes):\n        return None\n\n    # Verify ordering constraint (defensive; useful as a self-check and to\n    # guard against any subtle bug in degree counting or edge dedup).\n    pos = {n: i for i, n in enumerate(result)}\n    for n in nodes:\n        for d in deps_map[n]:\n            if d == n:\n                # Self-loop: would be caught by cycle detection above, but\n                # double-check for safety.\n                return None\n            if pos[d] >= pos[n]:\n                return None\n\n    return result\n"
+  },
+  {
+    "lane": "gpt-5-6-sol",
+    "task": "url_canon",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.147588,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 13.25,
+        "max_cc": 29,
+        "mi": 33.1,
+        "sloc": 132
+      },
+      "runtime_ms": 31.7
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Strict canonicalization of absolute HTTP and HTTPS URLs.\"\"\"\n\n_HEX = frozenset(\"0123456789abcdefABCDEF\")\n_UNRESERVED = frozenset(\n    \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~\"\n)\n_SUBDELIMS = frozenset(\"!$&'()*+,;=\")\n_HOST_CHARS = _UNRESERVED | _SUBDELIMS\n_PCHAR_CHARS = _UNRESERVED | _SUBDELIMS | frozenset(\":@\")\n_PATH_CHARS = _PCHAR_CHARS | frozenset(\"/\")\n_QUERY_FRAGMENT_CHARS = _PCHAR_CHARS | frozenset(\"/?\")\n\n\ndef _normalize_component(\n    value: str, allowed: frozenset[str], *, lowercase: bool = False\n) -> str | None:\n    \"\"\"Validate an ASCII URI component and uppercase percent-escape hex digits.\"\"\"\n    output: list[str] = []\n    index = 0\n\n    while index < len(value):\n        char = value[index]\n\n        if char == \"%\":\n            if (\n                index + 2 >= len(value)\n                or value[index + 1] not in _HEX\n                or value[index + 2] not in _HEX\n            ):\n                return None\n            output.append(\"%\")\n            output.append(value[index + 1].upper())\n            output.append(value[index + 2].upper())\n            index += 3\n            continue\n\n        if char not in allowed:\n            return None\n\n        output.append(char.lower() if lowercase else char)\n        index += 1\n\n    return \"\".join(output)\n\n\ndef _normalize_path(path: str) -> str | None:\n    if not path:\n        return \"/\"\n    if not path.startswith(\"/\"):\n        return None\n\n    normalized = _normalize_component(path, _PATH_CHARS)\n    if normalized is None:\n        return None\n\n    original_segments = normalized.split(\"/\")\n    trailing_directory = (\n        normalized.endswith(\"/\")\n        or original_segments[-1] == \".\"\n        or original_segments[-1] == \"..\"\n    )\n\n    resolved: list[str] = []\n    for segment in original_segments:\n        if segment == \"\" or segment == \".\":\n            continue\n        if segment == \"..\":\n            if resolved:\n                resolved.pop()\n            continue\n        resolved.append(segment)\n\n    result = \"/\" + \"/\".join(resolved)\n    if trailing_directory and result != \"/\":\n        result += \"/\"\n    return result\n\n\ndef _canonicalize_impl(url: str) -> str | None:\n    delimiter = url.find(\"://\")\n    if delimiter < 0:\n        return None\n\n    scheme = url[:delimiter].lower()\n    if scheme not in (\"http\", \"https\"):\n        return None\n\n    remainder = url[delimiter + 3 :]\n\n    authority_end = len(remainder)\n    for marker in \"/?#\":\n        position = remainder.find(marker)\n        if position >= 0 and position < authority_end:\n            authority_end = position\n\n    authority = remainder[:authority_end]\n    suffix = remainder[authority_end:]\n\n    if not authority or \"@\" in authority:\n        return None\n\n    # IPv6 literals are outside the accepted host grammar, so an authority can\n    # contain at most one colon, used exclusively as the port separator.\n    if authority.count(\":\") > 1:\n        return None\n\n    if \":\" in authority:\n        host_text, port_text = authority.rsplit(\":\", 1)\n        if not host_text or not port_text or not port_text.isascii():\n            return None\n        if not all(\"0\" <= char <= \"9\" for char in port_text):\n            return None\n\n        significant_port = port_text.lstrip(\"0\")\n        if not significant_port:\n            return None\n        if len(significant_port) > 5:\n            return None\n\n        port_number = int(significant_port)\n        if not 1 <= port_number <= 65535:\n            return None\n\n        default_port = 80 if scheme == \"http\" else 443\n        port = \"\" if port_number == default_port else \":\" + str(port_number)\n    else:\n        host_text = authority\n        port = \"\"\n\n    host = _normalize_component(host_text, _HOST_CHARS, lowercase=True)\n    if host is None or not host:\n        return None\n\n    fragment_text: str | None = None\n    hash_position = suffix.find(\"#\")\n    if hash_position >= 0:\n        fragment_text = suffix[hash_position + 1 :]\n        suffix = suffix[:hash_position]\n\n    query_text: str | None = None\n    query_position = suffix.find(\"?\")\n    if query_position >= 0:\n        query_text = suffix[query_position + 1 :]\n        path_text = suffix[:query_position]\n    else:\n        path_text = suffix\n\n    path = _normalize_path(path_text)\n    if path is None:\n        return None\n\n    query = \"\"\n    if query_text:\n        normalized_query = _normalize_component(\n            query_text, _QUERY_FRAGMENT_CHARS\n        )\n        if normalized_query is None:\n            return None\n        query = \"?\" + normalized_query\n\n    fragment = \"\"\n    if fragment_text:\n        normalized_fragment = _normalize_component(\n            fragment_text, _QUERY_FRAGMENT_CHARS\n        )\n        if normalized_fragment is None:\n            return None\n        fragment = \"#\" + normalized_fragment\n\n    return scheme + \"://\" + host + port + path + query + fragment\n\n\ndef canonicalize(url: str) -> str | None:\n    \"\"\"Return the canonical absolute HTTP(S) URL, or None if it is unacceptable.\"\"\"\n    try:\n        if not isinstance(url, str):\n            return None\n        return _canonicalize_impl(url)\n    except Exception:\n        return None\n"
+  },
+  {
+    "lane": "opus-4-8",
+    "task": "url_canon",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.068448,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 16.67,
+        "max_cc": 34,
+        "mi": 48.3,
+        "sloc": 153
+      },
+      "runtime_ms": 14.1
+    },
+    "code": "#!/usr/bin/env python3\n\"\"\"Security-relevant canonicalizer for absolute http/https URLs.\"\"\"\n\n\ndef _upper_percent_hex(s):\n    \"\"\"Uppercase hex digits in %XY escapes. Return None on malformed escape.\"\"\"\n    out = []\n    i = 0\n    n = len(s)\n    hexdigits = \"0123456789abcdefABCDEF\"\n    while i < n:\n        c = s[i]\n        if c == '%':\n            if i + 2 >= n:\n                return None\n            h1 = s[i + 1]\n            h2 = s[i + 2]\n            if h1 not in hexdigits or h2 not in hexdigits:\n                return None\n            out.append('%')\n            out.append(h1.upper())\n            out.append(h2.upper())\n            i += 3\n        else:\n            out.append(c)\n            i += 1\n    return ''.join(out)\n\n\ndef _normalize_path(path):\n    \"\"\"Resolve . and .. segments; collapse duplicate slashes.\n\n    path is guaranteed to start with '/'.\n    Returns the normalized path string.\n    \"\"\"\n    # Determine if the original path ended in a slash, or last segment is . or ..\n    # Split by '/'\n    parts = path.split('/')\n    # parts[0] is '' because path starts with '/'\n    # Determine trailing-slash intent\n    # The raw path ends with '/' if last part is ''\n    ends_with_slash = path.endswith('/')\n    last_segment = parts[-1] if parts else ''\n    last_is_dot = last_segment in ('.', '..')\n\n    stack = []\n    for seg in parts[1:]:\n        if seg == '' or seg == '.':\n            # empty (from duplicate slashes) or current dir -> skip\n            continue\n        elif seg == '..':\n            if stack:\n                stack.pop()\n            # else clamp at root\n        else:\n            stack.append(seg)\n\n    result = '/' + '/'.join(stack)\n\n    # Determine trailing slash preservation\n    trailing = ends_with_slash or last_is_dot\n\n    if trailing and result != '/':\n        result = result + '/'\n\n    return result\n\n\ndef canonicalize(url):\n    \"\"\"Return canonical form of an absolute http/https URL, or None.\"\"\"\n    try:\n        if not isinstance(url, str):\n            return None\n\n        # Find scheme separator \"://\"\n        idx = url.find(\"://\")\n        if idx <= 0:\n            return None\n\n        scheme = url[:idx]\n        rest = url[idx + 3:]\n\n        # Validate scheme: only alnum-ish; must be http or https (case-insensitive)\n        scheme_lower = scheme.lower()\n        if scheme_lower not in (\"http\", \"https\"):\n            return None\n\n        # rest = host[:port][path][?query][#frag]\n        # Split off fragment first (first '#')\n        frag = None\n        hash_idx = rest.find('#')\n        if hash_idx != -1:\n            frag = rest[hash_idx + 1:]\n            rest = rest[:hash_idx]\n\n        # Split off query (first '?')\n        query = None\n        q_idx = rest.find('?')\n        if q_idx != -1:\n            query = rest[q_idx + 1:]\n            rest = rest[:q_idx]\n\n        # Now rest = authority + path\n        # Authority ends at first '/' after start\n        slash_idx = rest.find('/')\n        if slash_idx != -1:\n            authority = rest[:slash_idx]\n            path = rest[slash_idx:]\n        else:\n            authority = rest\n            path = ''\n\n        # Reject userinfo\n        if '@' in authority:\n            return None\n\n        # Split host and port\n        # host must not contain '@'; also reject '[' for IPv6 (not accepted here as registered name/IPv4 only)\n        if '[' in authority or ']' in authority:\n            return None\n\n        host = authority\n        port = None\n        colon_idx = authority.rfind(':')\n        if colon_idx != -1:\n            host = authority[:colon_idx]\n            port = authority[colon_idx + 1:]\n\n        # Validate host: non-empty\n        if host == '':\n            return None\n\n        # Host must not contain spaces or control chars or '/' '?' '#'\n        for ch in host:\n            if ch in ('/', '?', '#', ' ', '\\t', '\\n', '\\r', '@', '[', ']'):\n                return None\n            if ord(ch) < 0x20:\n                return None\n\n        host_canonical = host.lower()\n\n        # Validate and canonicalize port\n        port_str = ''\n        if port is not None:\n            if port == '':\n                # \"host:\" with empty port -> treat as no port (default)\n                port_str = ''\n            else:\n                if not port.isdigit():\n                    return None\n                # all ascii digits guaranteed by isdigit? isdigit can match unicode digits\n                for ch in port:\n                    if ch not in '0123456789':\n                        return None\n                # strip leading zeros\n                pnum = int(port)\n                if pnum < 1 or pnum > 65535:\n                    return None\n                default = 80 if scheme_lower == 'http' else 443\n                if pnum == default:\n                    port_str = ''\n                else:\n                    port_str = ':' + str(pnum)\n\n        # Canonicalize path\n        if path == '':\n            canon_path = '/'\n        else:\n            if not path.startswith('/'):\n                return None\n            canon_path = _normalize_path(path)\n\n        # Apply percent-hex uppercasing to path\n        canon_path = _upper_percent_hex(canon_path)\n        if canon_path is None:\n            return None\n\n        # Query\n        query_part = ''\n        if query is not None:\n            if query != '':\n                q = _upper_percent_hex(query)\n                if q is None:\n                    return None\n                query_part = '?' + q\n            # empty query dropped\n\n        # Fragment\n        frag_part = ''\n        if frag is not None:\n            if frag != '':\n                f = _upper_percent_hex(frag)\n                if f is None:\n                    return None\n                frag_part = '#' + f\n            # empty fragment dropped\n\n        return scheme_lower + '://' + host_canonical + port_str + canon_path + query_part + frag_part\n\n    except Exception:\n        return None\n\n\nif __name__ == '__main__':\n    tests = [\n        \"http://example.com\",\n        \"https://Example.COM:443/a/./b/../c\",\n        \"http://host:080/\",\n        \"http://host:00/\",\n        \"http://user@host/\",\n        \"ftp://host/\",\n        \"http://host/../a\",\n        \"http://host/a//b\",\n        \"http://host/path/?\",\n        \"http://host/path#\",\n        \"http://host/%2fabc\",\n        \"http://host/foo/.\",\n        \"not a url\",\n        \"http://\",\n    ]\n    for t in tests:\n        print(repr(t), \"->\", repr(canonicalize(t)))\n"
+  },
+  {
+    "lane": "gpt-5-6-luna",
+    "task": "url_canon",
+    "ok": true,
+    "visible_pct": 86,
+    "hidden_pct": 83,
+    "cost": 0.031452,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 0,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 72.0,
+        "max_cc": 72,
+        "mi": 27.2,
+        "sloc": 190
+      },
+      "runtime_ms": 69.3
+    },
+    "code": "#!/usr/bin/env python3\n\n__all__ = [\"canonicalize\"]\n\n\ndef canonicalize(url: str) -> str | None:\n    \"\"\"Return a canonical absolute HTTP(S) URL, or None if it is invalid.\"\"\"\n\n    def uppercase_escapes(value: str) -> str | None:\n        out = []\n        i = 0\n        while i < len(value):\n            ch = value[i]\n            if ch == \"%\":\n                if i + 2 >= len(value):\n                    return None\n                a, b = value[i + 1], value[i + 2]\n                if a not in \"0123456789abcdefABCDEF\":\n                    return None\n                if b not in \"0123456789abcdefABCDEF\":\n                    return None\n                out.append(\"%\" + a.upper() + b.upper())\n                i += 3\n            else:\n                out.append(ch)\n                i += 1\n        return \"\".join(out)\n\n    def valid_component(value: str, allow_slash: bool, allow_question: bool) -> bool:\n        unreserved = (\n            \"abcdefghijklmnopqrstuvwxyz\"\n            \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"\n            \"0123456789-._~\"\n        )\n        subdelims = \"!$&'()*+,;=\"\n        allowed = unreserved + subdelims + \":@\"\n        if allow_slash:\n            allowed += \"/\"\n        if allow_question:\n            allowed += \"?\"\n        i = 0\n        while i < len(value):\n            ch = value[i]\n            if ch == \"%\":\n                if i + 2 >= len(value):\n                    return False\n                if (\n                    value[i + 1] not in \"0123456789abcdefABCDEF\"\n                    or value[i + 2] not in \"0123456789abcdefABCDEF\"\n                ):\n                    return False\n                i += 3\n                continue\n            if ch not in allowed:\n                return False\n            i += 1\n        return True\n\n    if not isinstance(url, str):\n        return None\n\n    lowered = url.lower()\n    if lowered.startswith(\"http://\"):\n        scheme = \"http\"\n        start = 7\n        default_port = 80\n    elif lowered.startswith(\"https://\"):\n        scheme = \"https\"\n        start = 8\n        default_port = 443\n    else:\n        return None\n\n    # Reject control characters and non-ASCII URL syntax conservatively.\n    for ch in url:\n        if ord(ch) < 0x20 or ord(ch) == 0x7F or ord(ch) > 0x7F:\n            return None\n\n    remainder = url[start:]\n\n    authority_end = len(remainder)\n    for delimiter in \"/?#\":\n        pos = remainder.find(delimiter)\n        if pos != -1 and pos < authority_end:\n            authority_end = pos\n\n    authority = remainder[:authority_end]\n    tail = remainder[authority_end:]\n\n    if not authority or \"@\" in authority:\n        return None\n\n    if authority.count(\":\") > 1:\n        return None\n\n    if \":\" in authority:\n        host, port_text = authority.split(\":\", 1)\n        if not port_text or not port_text.isdigit():\n            return None\n\n        stripped = port_text.lstrip(\"0\")\n        if not stripped:\n            return None\n        if len(stripped) > 5:\n            return None\n        port_value = int(stripped)\n        if port_value < 1 or port_value > 65535:\n            return None\n\n        port_suffix = \"\" if port_value == default_port else \":\" + str(port_value)\n    else:\n        host = authority\n        port_suffix = \"\"\n\n    if not host:\n        return None\n    if host.startswith(\"[\") or host.endswith(\"]\"):\n        return None\n\n    # Accept ordinary ASCII DNS-style registered names. A trailing dot is\n    # allowed for a fully-qualified name, but other empty labels are not.\n    host_lower = host.lower()\n    if host_lower.endswith(\".\"):\n        label_part = host_lower[:-1]\n    else:\n        label_part = host_lower\n\n    if not label_part:\n        return None\n\n    labels = label_part.split(\".\")\n    for label in labels:\n        if not label or len(label) > 63:\n            return None\n        if label[0] == \"-\" or label[-1] == \"-\":\n            return None\n        for ch in label:\n            if not (\"a\" <= ch <= \"z\" or \"0\" <= ch <= \"9\" or ch == \"-\"):\n                return None\n\n    # Reject malformed dotted-decimal-looking hosts rather than treating them\n    # as names.\n    if len(labels) == 4 and all(label.isdigit() for label in labels):\n        if any(int(label) > 255 for label in labels):\n            return None\n\n    if tail:\n        query_pos = tail.find(\"?\")\n        fragment_pos = tail.find(\"#\")\n\n        cut = len(tail)\n        if query_pos != -1 and query_pos < cut:\n            cut = query_pos\n        if fragment_pos != -1 and fragment_pos < cut:\n            cut = fragment_pos\n\n        path = tail[:cut]\n        remainder_tail = tail[cut:]\n    else:\n        path = \"\"\n        remainder_tail = \"\"\n\n    if path and not path.startswith(\"/\"):\n        return None\n    if not valid_component(path, allow_slash=True, allow_question=False):\n        return None\n\n    query = None\n    fragment = None\n\n    if remainder_tail.startswith(\"?\"):\n        hash_pos = remainder_tail.find(\"#\", 1)\n        if hash_pos == -1:\n            query = remainder_tail[1:]\n            remainder_tail = \"\"\n        else:\n            query = remainder_tail[1:hash_pos]\n            remainder_tail = remainder_tail[hash_pos:]\n\n    if remainder_tail.startswith(\"#\"):\n        fragment = remainder_tail[1:]\n        remainder_tail = \"\"\n\n    if remainder_tail:\n        return None\n\n    if query is not None:\n        if not valid_component(query, allow_slash=True, allow_question=True):\n            return None\n        query = uppercase_escapes(query)\n        if query is None:\n            return None\n        if query == \"\":\n            query = None\n\n    if fragment is not None:\n        if not valid_component(fragment, allow_slash=True, allow_question=True):\n            return None\n        fragment = uppercase_escapes(fragment)\n        if fragment is None:\n            return None\n        if fragment == \"\":\n            fragment = None\n\n    normalized_path = uppercase_escapes(path)\n    if normalized_path is None:\n        return None\n\n    if not normalized_path:\n        canonical_path = \"/\"\n    else:\n        parts = normalized_path.split(\"/\")\n        segments = []\n        trailing_directory = normalized_path.endswith(\"/\")\n\n        for segment in parts:\n            if segment == \"\":\n                continue\n            if segment == \".\":\n                trailing_directory = True\n            elif segment == \"..\":\n                if segments:\n                    segments.pop()\n                trailing_directory = True\n            else:\n                segments.append(segment)\n\n        canonical_path = \"/\" + \"/\".join(segments)\n        if trailing_directory and canonical_path != \"/\":\n            canonical_path += \"/\"\n\n    result = scheme + \"://\" + host_lower + port_suffix + canonical_path\n    if query is not None:\n        result += \"?\" + query\n    if fragment is not None:\n        result += \"#\" + fragment\n    return result\n"
+  },
+  {
+    "lane": "anvil-v2",
+    "task": "url_canon",
+    "ok": true,
+    "visible_pct": 100,
+    "hidden_pct": 100,
+    "cost": 0.008461,
+    "profile": {
+      "fmt_changed": true,
+      "lint": 1,
+      "security": {
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0
+      },
+      "complexity": {
+        "avg_cc": 16.6,
+        "max_cc": 27,
+        "mi": 44.1,
+        "sloc": 186
+      },
+      "runtime_ms": 17.5
+    },
+    "code": "#!/usr/bin/env python3\ndef canonicalize(url):\n    if not isinstance(url, str):\n        return None\n    s = url\n    # Find scheme\n    scheme_end = s.find(':')\n    if scheme_end <= 0:\n        return None\n    scheme = s[:scheme_end].lower()\n    if scheme not in ('http', 'https'):\n        return None\n    rest = s[scheme_end+1:]\n    # Must start with \"//\" after scheme colon\n    if not rest.startswith('//'):\n        return None\n    rest = rest[2:]\n    # Split off fragment\n    frag = None\n    hash_idx = rest.find('#')\n    if hash_idx != -1:\n        frag_part = rest[hash_idx+1:]\n        frag = frag_part  # may be empty string\n        rest = rest[:hash_idx]\n    # Split off query\n    query = None\n    q_idx = rest.find('?')\n    if q_idx != -1:\n        query_part = rest[q_idx+1:]\n        query = query_part\n        rest = rest[:q_idx]\n    # Now rest is authority + path\n    # Find first '/' for path start\n    path_idx = rest.find('/')\n    if path_idx == -1:\n        authority = rest\n        path = ''\n    else:\n        authority = rest[:path_idx]\n        path = rest[path_idx:]\n    # Parse host and port from authority\n    # Reject userinfo (any '@')\n    if '@' in authority:\n        return None\n    if not authority:\n        return None\n    # Port\n    port_str = None\n    host = authority\n    # IPv6 in brackets? Spec says \"registered name or IPv4\", so reject IPv6 literals.\n    if host.startswith('['):\n        return None\n    # Find last colon - if multiple colons, it's not IPv4 (which we only accept)\n    colon_idx = host.rfind(':')\n    if colon_idx != -1:\n        port_part = host[colon_idx+1:]\n        host = host[:colon_idx]\n        # Validate port is all digits\n        if not port_part or not port_part.isdigit():\n            return None\n        port_str = port_part\n    # Validate host is non-empty\n    if not host:\n        return None\n    # Lowercase host\n    host = host.lower()\n    # Validate host: registered name or IPv4\n    if not _is_valid_host(host):\n        return None\n    # Validate port range\n    if port_str is not None:\n        # Strip leading zeros for comparison, but treat all-digit string\n        # Convert to int\n        try:\n            port_num = int(port_str)\n        except ValueError:\n            return None\n        if port_num < 1 or port_num > 65535:\n            return None\n        # Check if default port\n        default = 80 if scheme == 'http' else 443\n        if port_num == default:\n            port_out = ''\n        else:\n            port_out = ':' + str(port_num)\n    else:\n        port_out = ''\n    # Normalize path\n    if path == '':\n        path = '/'\n    norm_path = _normalize_path(path)\n    # Uppercase percent-encoding hex in path\n    norm_path = _uppercase_percent(norm_path)\n    # Uppercase percent-encoding hex in query\n    if query is not None:\n        query_out = _uppercase_percent(query)\n        if query_out == '':\n            query_final = ''\n        else:\n            query_final = '?' + query_out\n    else:\n        query_final = ''\n    # Fragment\n    if frag is not None:\n        frag_out = _uppercase_percent(frag)\n        if frag_out == '':\n            frag_final = ''\n        else:\n            frag_final = '#' + frag_out\n    else:\n        frag_final = ''\n    return scheme + '://' + host + port_out + norm_path + query_final + frag_final\n\ndef _is_valid_host(host):\n    if not host:\n        return False\n    # Reject empty labels, leading/trailing hyphens, etc.\n    # Registered name: labels of letters/digits/hyphens, separated by dots\n    # IPv4: four dot-separated decimals 0-255\n    # Try IPv4 first\n    parts = host.split('.')\n    if len(parts) == 4 and all(p.isdigit() for p in parts):\n        try:\n            nums = [int(p) for p in parts]\n            if all(0 <= n <= 255 for n in nums):\n                # Check for leading zeros - reject \"01\" style (lenient: allow \"0\" but not \"01\")\n                ok = True\n                for p, n in zip(parts, nums):\n                    if len(p) > 1 and p[0] == '0':\n                        ok = False\n                        break\n                if ok:\n                    return True\n        except ValueError:\n            pass\n    # Registered name validation\n    if '.' in host:\n        labels = host.split('.')\n    else:\n        labels = [host]\n    for label in labels:\n        if not label:\n            return False\n        if len(label) > 63:\n            return False\n        # Must not start or end with hyphen\n        if label[0] == '-' or label[-1] == '-':\n            return False\n        for ch in label:\n            if not (ch.isalnum() or ch == '-'):\n                return False\n    # Total length check\n    if len(host) > 253:\n        return False\n    # A single label is technically valid (e.g., \"localhost\")\n    return True\n\ndef _normalize_path(path):\n    # Collapse multiple slashes first\n    # Split by '/'\n    # We handle this manually to preserve semantics\n    # Actually we need to handle \"//\" -> \"/\" collapse\n    # Split into segments by '/', then process\n    # Leading slash behavior: path starts with '/'\n    if not path:\n        return '/'\n    # Special case: if path starts with '/', we resolve from root\n    if path == '/':\n        return '/'\n    leading_slash = path[0] == '/'\n    # Collapse multiple slashes by splitting and rejoining\n    parts = path.split('/')\n    # parts will have empty strings for consecutive slashes\n    # Filter out empty segments, but track trailing slash intent\n    segments = []\n    for p in parts:\n        if p == '':\n            continue\n        segments.append(p)\n    # Now process '.' and '..'\n    # Determine if original path ended with '/'\n    # Strip leading empty segment if path started with '/' (parts[0] is '')\n    # Actually after split('/'), parts[0] is '' for \"/foo\" and that's filtered above.\n    ended_with_slash = path.endswith('/') and len(path) > 1\n    # Track whether last meaningful segment was '.' or '..'\n    # We need to know if the original LAST segment was \".\" or \"..\"\n    # Find last non-empty segment in original path\n    last_seg_was_dot = False\n    last_seg_was_dotdot = False\n    # Get original segments (between slashes) preserving order\n    orig_segments = [p for p in parts if p != '']\n    if orig_segments:\n        last = orig_segments[-1]\n        if last == '.':\n            last_seg_was_dot = True\n        elif last == '..':\n            last_seg_was_dotdot = True\n    # Build stack\n    stack = []\n    for seg in segments:\n        if seg == '.':\n            continue  # skip\n        elif seg == '..':\n            if stack and stack[-1] != '':\n                stack.pop()\n            # else: pop nothing (clamped at root), but we don't add '..'\n        else:\n            stack.append(seg)\n    # Determine trailing slash:\n    # Preserve trailing slash if:\n    # - original path ended in \"/\", OR\n    # - original last segment was \".\" or \"..\" (resolving to a directory)\n    # But if the result is empty (just \"/\"), don't double-slash\n    has_trailing = False\n    if ended_with_slash:\n        has_trailing = True\n    elif last_seg_was_dot or last_seg_was_dotdot:\n        # Only add trailing slash if there's something on the stack\n        # Actually: \"/a/..\" -> stack=[], last was '..', but result is \"/\" (root)\n        # \"/a/./..\" -> stack=[], last is '..', result is \"/\"\n        # \"/a/b/..\" -> stack=['a'], last is '..', result is \"/a/\" (directory)\n        # \"/a/.\" -> stack=['a'], last is '.', result is \"/a/\"\n        # \"/a/b/.\" -> stack=['a','b'], last is '.', result is \"/a/b/\"\n        # So yes, add trailing slash if last was '.' or '..' and we have non-empty stack\n        if stack:\n            has_trailing = True\n    # Now reconstruct\n    if not stack:\n        return '/'\n    result = '/' + '/'.join(stack)\n    if has_trailing:\n        result += '/'\n    return result\n\ndef _uppercase_percent(s):\n    # Convert %XY where X,Y are hex to uppercase\n    if '%' not in s:\n        return s\n    result = []\n    i = 0\n    n = len(s)\n    while i < n:\n        ch = s[i]\n        if ch == '%' and i + 2 < n:\n            # Need exactly 2 more chars and both hex\n            hex_chars = s[i+1:i+3]\n            if len(hex_chars) == 2 and _is_hex(hex_chars[0]) and _is_hex(hex_chars[1]):\n                result.append('%')\n                result.append(hex_chars[0].upper())\n                result.append(hex_chars[1].upper())\n                i += 3\n                continue\n        result.append(ch)\n        i += 1\n    return ''.join(result)\n\ndef _is_hex(c):\n    return ('0' <= c <= '9') or ('a' <= c <= 'f') or ('A' <= c <= 'F')"
+  }
+]

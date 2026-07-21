@@ -1,8 +1,6 @@
 # GATEBENCH
 
-![10 systems scored 100% on the visible gate; measured cost per task runs from $0.1829 at the top down to $0.0063 for the gated pool (Anvil) at the bottom, a 28.9x spread](assets/hero.svg)
-
-![GATEBENCH: the gate is the moat](assets/banner.png)
+![Gatebench: the model doesn't get the last word. A public, reproducible benchmark where low-cost models must earn a green gate before they ship. 100% visible, 98% hidden, $0.0063 a task](assets/hero-banner.png)
 
 **A public, verifiable benchmark of the gate-first executor thesis:** wrap a pool of low-cost
 models in a machine gate and you match or beat frontier models on correctness at a small
@@ -19,6 +17,10 @@ seconds.
 
 Throughout the result JSONs and scripts, the Anvil lane is recorded under the lane id
 `anvil-v2`; this README calls it Anvil.
+
+## The leaderboard
+
+![10 systems scored 100% on the visible gate; measured cost per task runs from $0.1829 at the top down to $0.0063 for the gated pool (Anvil) at the bottom, a 28.9x spread](assets/hero.svg)
 
 ## The money chart
 

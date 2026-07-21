@@ -30,7 +30,16 @@ lanes are excluded from the plot: `fable-5` (router content-filter bug — 0 is 
 score) and `hermes` (empty output on every task, $0 measured spend, unplottable on a log cost
 axis).*
 
-Three more views of the same fold, all emitted by the same self-checking script:
+More views from the same self-checking script:
+
+- [`assets/hero-quality.svg`](assets/hero-quality.svg) — the quality card: maintainability
+  index, measured runtime, and run cost for the 4 objectively profiled lanes
+  (`results/results-objective.json`), the gate-first lane on top of every panel.
+- [`assets/gated-climb-flow.svg`](assets/gated-climb-flow.svg) — how the method works: a flow
+  diagram of the gated climb (probe, gate, targeted repair, escalate, honest stop). Static
+  diagram, no benchmark data.
+
+Three more views of the same fold:
 
 - [`assets/cost-per-correct-task.svg`](assets/cost-per-correct-task.svg) — the 10 lanes that
   scored 100% visible, ranked by measured avg cost per task, with the cost multiple vs the

@@ -31,8 +31,16 @@ Charts written (all into assets/):
                             per task and the multiple vs Anvil under each system.
   hero.svg                  the dark 1200x630 share graphic: the ten lanes at 100%
                             visible in two mirrored panels, correctness parity on the
-                            left, measured cost per task (linear) on the right, sorted
-                            most expensive first with the gated pool at the bottom.
+                            left, measured cost per task (linear, heat-colored by the
+                            multiple vs the gated pool) on the right, lowest cost first
+                            so the gated pool is the top row.
+  hero-quality.svg          the dark 1200x630 quality card: the 4 objectively profiled
+                            lanes (results-objective.json) across three panels, namely
+                            maintainability index, measured runtime, and run cost, with
+                            the gated pool as the top row of each panel.
+  gated-climb-flow.svg      static hand-laid flow diagram of the gated-climb method
+                            (probe, gate, targeted repair, escalate, honest stop); no
+                            benchmark data, light theme like the non-hero charts.
 
 Aggregation matches runners/agg.py exactly (per-lane mean over the 5 v1.7 tasks;
 failed cells score 0; costs summed as measured). The script asserts its own
@@ -124,6 +132,8 @@ def load_objective():
         rt = [r["profile"]["runtime_ms"] for r in ok]
         out[lane] = {
             "cells": f"{len(ok)}/{len(rs)}",
+            "ok_n": len(ok),
+            "n": len(rs),
             "mi": sum(mi) / len(mi),
             "rt": sum(rt) / len(rt),
             "cost": sum(r.get("cost") or 0.0 for r in rs),
@@ -541,25 +551,32 @@ def chart_gated_vs_fusion(lanes):
 
 
 # ---------------------------------------------------------------- chart 7: hero (dark share graphic)
-# dark palette, this chart only
+# dark palette, hero cards only
 SURFACE_D = "#0e1113"
 INK_D = "#e8eaec"
 INK2_D = "#a6adb3"
 GRID_D = "#2c3237"
-BAR_D = "#4d565c"
-BLUE_D = "#5b9ae0"
+STEEL_D = "#3e5a75"   # correctness bars and non-highlighted quality bars
+GREEN_D = "#2fbf5f"   # the gated pool
+AMBER_D = "#d9a441"   # cost heat: low multiples vs the gated pool
+RED_D = "#d96a4a"     # cost heat: double-digit multiples vs the gated pool
+
+
+def heat(mult):
+    """Cost-bar heat color by multiple vs the gated pool baseline."""
+    return GREEN_D if mult <= 1.0 else RED_D if mult >= 12.0 else AMBER_D
 
 
 def hero_order(lanes):
-    """The 100%-visible lanes, most expensive per task first (gated pool lands last)."""
-    return list(reversed(perfect_lanes(lanes)))
+    """The 100%-visible lanes, lowest cost per task first (gated pool on top)."""
+    return perfect_lanes(lanes)
 
 
 def chart_hero(lanes):
     order = hero_order(lanes)
     n = len(order)
     base = lanes["anvil-v2"]["cost_per_task"]
-    xmax = lanes[order[0]]["cost_per_task"]
+    xmax = max(lanes[l]["cost_per_task"] for l in order)
     w, h = 1200, 630
     y0, step, bar_h = 140, 40, 26
     lw = 360                    # bar track width, both panels
@@ -570,8 +587,8 @@ def chart_hero(lanes):
          f'viewBox="0 0 {w} {h}" role="img" aria-label="Dual-panel dark chart: the {n} '
          'lanes that scored 100 percent on the visible gate, sorted by measured cost per '
          'task. Left panel: correctness, all tied at 100 percent. Right panel: cost per '
-         f'task on a linear scale, from ${xmax:.4f} at the top down to ${base:.4f} for '
-         f'Anvil at the bottom, a {xmax / base:.1f}x spread.">',
+         f'task on a linear scale, from ${base:.4f} for Anvil on the top row down to '
+         f'${xmax:.4f} at the bottom, a {xmax / base:.1f}x spread.">',
          f'<rect width="{w}" height="{h}" fill="{SURFACE_D}"/>']
     s.append(text(60, 48, f"{n} systems scored 100%. Here's what each one paid.",
                   23, INK_D, weight="700"))
@@ -599,28 +616,27 @@ def chart_hero(lanes):
         L = lanes[lane]
         y = y0 + i * step
         hot = lane == "anvil-v2"
-        fill = BLUE_D if hot else BAR_D
-        ink = INK_D if hot else INK2_D
+        m = L["cost_per_task"] / base
         wt = "700" if hot else "normal"
         disp = "Anvil" if hot else lane
         bw = max(L["cost_per_task"] / xmax * lw, 2.0)
         if hot:
             # subtle glow behind the highlighted bars
             s.append(f'<rect x="{lx1 - lw - 3:.1f}" y="{y - 3}" width="{lw + 6}" '
-                     f'height="{bar_h + 6}" rx="7" fill="{BLUE_D}" fill-opacity="0.28"/>')
+                     f'height="{bar_h + 6}" rx="7" fill="{GREEN_D}" fill-opacity="0.28"/>')
             s.append(f'<rect x="{rx0 - 3}" y="{y - 3}" width="{bw + 6:.1f}" '
-                     f'height="{bar_h + 6}" rx="7" fill="{BLUE_D}" fill-opacity="0.28"/>')
+                     f'height="{bar_h + 6}" rx="7" fill="{GREEN_D}" fill-opacity="0.28"/>')
         s.append(f'<rect x="{lx1 - lw}" y="{y}" width="{lw}" height="{bar_h}" '
-                 f'rx="4" fill="{fill}"/>')
-        s.append(text(lx1 - lw - 10, y + bar_h / 2 + 4, "100", 12, ink, anchor="end",
+                 f'rx="4" fill="{GREEN_D if hot else STEEL_D}"/>')
+        s.append(text(lx1 - lw - 10, y + bar_h / 2 + 4, "100", 12, INK_D, anchor="end",
                       weight=wt))
-        s.append(text((lx1 + rx0) / 2, y + bar_h / 2 + 4, disp, 13, ink,
-                      anchor="middle", weight=wt))
+        s.append(text((lx1 + rx0) / 2, y + bar_h / 2 + 4, disp, 13,
+                      INK_D if hot else INK2_D, anchor="middle", weight=wt))
         s.append(f'<rect x="{rx0}" y="{y}" width="{bw:.1f}" height="{bar_h}" '
-                 f'rx="4" fill="{fill}"/>')
-        mult = "baseline" if hot else f"{L['cost_per_task'] / base:.1f}x"
+                 f'rx="4" fill="{heat(m)}"/>')
+        mult = "baseline" if hot else f"{m:.1f}x"
         s.append(text(rx0 + bw + 10, y + bar_h / 2 + 4,
-                      f"${L['cost_per_task']:.4f} · {mult}", 12, ink, weight=wt))
+                      f"${L['cost_per_task']:.4f} · {mult}", 12, INK_D, weight=wt))
     s.append(text(lx1 - lw / 2, rows_bot + 44, "avg visible-gate % (133 checks per lane)",
                   11, INK2_D, anchor="middle"))
     s.append(text(rx0 + lw / 2, rows_bot + 44, "linear scale; multiple vs Anvil on each bar",
@@ -629,6 +645,184 @@ def chart_hero(lanes):
     s.append(text(w - 60, h - 14, "generated by assets/generate_charts.py from "
                                   "results/results-full.json + results-pass2.json",
                   10, INK2_D, anchor="end"))
+    s.append("</svg>")
+    return "\n".join(s) + "\n"
+
+
+# ---------------------------------------------------------------- chart 8: hero quality card (dark)
+Q_ORDER = ["anvil-v2", "opus-4-8", "gpt-5-6-sol", "gpt-5-6-luna"]
+
+
+def chart_hero_quality(obj):
+    w, h = 1200, 630
+    x0s, pw = (60, 450, 840), 340
+    y0, step, bar_h = 192, 90, 42
+    label_w, track = 100, 150
+    A = obj["anvil-v2"]
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+         f'viewBox="0 0 {w} {h}" role="img" aria-label="Three-panel dark chart over the '
+         '4 objectively profiled lanes. Anvil, the top row of every panel, has the '
+         f'highest maintainability index at {A["mi"]:.1f}, the fastest measured runtime '
+         f'at {A["rt"]:.0f} ms, and the lowest run cost at ${A["cost"]:.3f}.">',
+         f'<rect width="{w}" height="{h}" fill="{SURFACE_D}"/>']
+    s.append(text(60, 48, "Better code. Faster code. A fraction of the bill.",
+                  23, INK_D, weight="700"))
+    s.append(text(60, 74, "4 leading lanes, formatting normalized before scoring; all 4 "
+                          "at 100% visible correctness. Objective re-score run; Anvil "
+                          "aggregates cover the", 13, INK2_D))
+    s.append(text(60, 94, f"{A['ok_n']} of {A['n']} tasks that completed generation, "
+                          "timeouts disclosed in the repo.", 13, INK2_D))
+
+    def panel(x0, title, key, fmt):
+        out = [text(x0, 156, title, 13, INK_D, weight="600")]
+        vmax = max(obj[l][key] for l in Q_ORDER) * 1.12
+        for i, lane in enumerate(Q_ORDER):
+            v = obj[lane][key]
+            y = y0 + i * step
+            hot = lane == "anvil-v2"
+            wt = "700" if hot else "normal"
+            disp = "Anvil" if hot else lane
+            bw = max(v / vmax * track, 2.0)
+            out.append(text(x0 + label_w, y + bar_h / 2 + 4, disp, 12,
+                            INK_D if hot else INK2_D, anchor="end", weight=wt))
+            out.append(f'<rect x="{x0 + label_w + 12}" y="{y}" width="{bw:.1f}" '
+                       f'height="{bar_h}" rx="4" fill="{GREEN_D if hot else STEEL_D}"/>')
+            out.append(text(x0 + label_w + 12 + bw + 8, y + bar_h / 2 + 4, fmt(v), 12,
+                            INK_D, weight=wt))
+        return out
+
+    s += panel(x0s[0], "maintainability index (higher is better)", "mi",
+               lambda v: f"{v:.1f}")
+    s += panel(x0s[1], "measured runtime ms (lower is better)", "rt",
+               lambda v: f"{v:.0f} ms")
+    s += panel(x0s[2], "run cost USD (lower is better)", "cost",
+               lambda v: f"${v:.3f}")
+    s.append(text(60, h - 14, "github.com/FerroxLabs/gatebench", 10, INK2_D))
+    s.append(text(w - 60, h - 14, "generated by assets/generate_charts.py from "
+                                  "results/results-objective.json", 10, INK2_D,
+                  anchor="end"))
+    s.append("</svg>")
+    return "\n".join(s) + "\n"
+
+
+# ---------------------------------------------------------------- chart 9: gated-climb flow diagram
+# Static hand-laid method diagram: light theme, no benchmark data. Every coordinate is a
+# literal, so the output is trivially deterministic.
+FLOW_GREEN = "#2f9e44"
+FLOW_RED = "#c8553d"
+NODE_STROKE = AXIS
+NODE_FILL = "#ffffff"
+DIA_FILL = "#f4f3ec"
+
+
+def chart_flow():
+    w, h = 920, 760
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+         f'viewBox="0 0 {w} {h}" role="img" aria-label="Flow diagram of the gated climb: '
+         'probe with one low-cost model, run the visible gate, exit on green after a free '
+         'tooling polish, otherwise loop: pick the first failing check, repair with an '
+         'untried low-cost model or escalate up the ladder, re-gate, keep only strict '
+         'improvements, and stop honestly when the budget is spent or the climb plateaus.">',
+         f'<rect width="{w}" height="{h}" fill="{SURFACE}"/>',
+         '<defs>']
+    for mid, color in (("ah", INK2), ("ahg", FLOW_GREEN), ("ahr", FLOW_RED), ("ahb", BLUE)):
+        s.append(f'<marker id="{mid}" markerWidth="9" markerHeight="8" refX="7.5" '
+                 f'refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="{color}"/>'
+                 '</marker>')
+    s.append('</defs>')
+
+    def node(x, y, bw, bh, lines, color=INK, weight="normal", fill=NODE_FILL,
+             stroke=NODE_STROKE, size=12):
+        out = [f'<rect x="{x}" y="{y}" width="{bw}" height="{bh}" rx="8" '
+               f'fill="{fill}" stroke="{stroke}" stroke-width="1.2"/>']
+        cy = y + bh / 2 - (len(lines) - 1) * 9 + 4
+        for ln in lines:
+            out.append(text(x + bw / 2, cy, ln, size, color, anchor="middle",
+                            weight=weight))
+            cy += 18
+        return out
+
+    def dia(cx, cy, rx, ry, label, size=11):
+        return [f'<polygon points="{cx - rx},{cy} {cx},{cy - ry} {cx + rx},{cy} '
+                f'{cx},{cy + ry}" fill="{DIA_FILL}" stroke="{NODE_STROKE}" '
+                'stroke-width="1.2"/>',
+                text(cx, cy + 4, label, size, INK, anchor="middle", weight="600")]
+
+    def edge(d, color=INK2, marker="ah"):
+        return (f'<path d="{d}" fill="none" stroke="{color}" stroke-width="1.6" '
+                f'marker-end="url(#{marker})"/>')
+
+    s.append(text(40, 32, "The gated climb: how one task moves through the executor",
+                  16, INK, weight="600"))
+    # top spine
+    s += node(40, 64, 165, 36, ["task + gate script"])
+    s.append(edge("M205,82 L241,82"))
+    s += node(245, 64, 235, 36, ["PROBE: 1 low-cost model, 1 attempt"])
+    s.append(edge("M480,82 L516,82"))
+    s += node(520, 64, 115, 36, ["RUN GATE"], color=BLUE, weight="600")
+    s.append(edge("M635,82 L676,82"))
+    s += dia(745, 82, 65, 26, "green?", size=12)
+    # happy exit: green -> free polish -> DONE
+    s.append(edge("M810,82 L850,82 Q860,82 860,92 L860,110 Q860,120 850,120 "
+                  "L800,120 Q790,120 790,130 L790,142", FLOW_GREEN, "ahg"))
+    s.append(text(868, 106, "yes", 11, FLOW_GREEN, weight="600"))
+    s += node(600, 146, 210, 36, ["free tooling polish, re-gate"])
+    s.append(edge("M810,164 L826,164", FLOW_GREEN, "ahg"))
+    s += node(830, 146, 80, 36, ["DONE"], color=FLOW_GREEN, weight="700",
+              fill="#e9f5ec", stroke=FLOW_GREEN)
+    s.append(text(755, 202, "most easy tasks end here: $0.0007", 11, MUTED,
+                  anchor="middle"))
+    # red exit: not green -> pick target
+    s.append(edge("M745,108 L745,122 Q745,132 735,132 L310,132 Q300,132 300,142 "
+                  "L300,176", FLOW_RED, "ahr"))
+    s.append(text(755, 126, "no", 11, FLOW_RED, weight="600"))
+    s += node(140, 180, 320, 48, ["pick target: first failing check",
+                                  "with an untried model"])
+    s.append(edge("M300,228 L300,246"))
+    s += dia(300, 284, 125, 34, "untried low-cost model?")
+    # repair vs escalate
+    s.append(edge("M300,318 L300,348", FLOW_GREEN, "ahg"))
+    s.append(text(308, 338, "yes", 11, FLOW_GREEN, weight="600"))
+    s += node(120, 352, 330, 48, ["surgical repair: spec + candidate",
+                                  "+ check NAMES only"])
+    s.append(edge("M425,284 L466,284"))
+    s.append(text(432, 276, "no", 11, INK2, weight="600"))
+    s += node(470, 266, 225, 36, ["ESCALATE up the model ladder"])
+    s.append(text(612, 330, "the only place a frontier model gets called", 11, MUTED))
+    # both feed the gate
+    s.append(edge("M250,400 L250,432"))
+    s.append(edge("M582,302 L582,444 Q582,454 572,454 L481,454"))
+    s += node(237, 436, 240, 36, ["RUN GATE on candidate"], color=BLUE, weight="600")
+    s.append(edge("M357,472 L357,500"))
+    s += dia(357, 538, 105, 34, "better?", size=12)
+    s.append(text(357, 598, "better = score strictly up, or a tie with strictly fewer "
+                            "failures", 11, MUTED, anchor="middle"))
+    # accept / discard
+    s.append(edge("M462,538 L518,538", FLOW_GREEN, "ahg"))
+    s.append(text(472, 530, "yes", 11, FLOW_GREEN, weight="600"))
+    s += node(522, 520, 180, 36, ["accept: new best"])
+    s.append(edge("M252,538 L226,538", FLOW_RED, "ahr"))
+    s.append(text(237, 530, "no", 11, FLOW_RED, weight="600"))
+    s += node(40, 514, 182, 48, ["discard, remember model", "failed this check"])
+    # the climb: both outcomes rejoin the loop, with a budget/plateau side exit
+    s.append(f'<path d="M612,556 L612,624" fill="none" stroke="{BLUE}" '
+             'stroke-width="1.6"/>')
+    s.append(edge("M131,562 L131,614 Q131,624 141,624 L640,624", BLUE, "ahb"))
+    s += dia(760, 624, 115, 30, "budget spent or plateau?")
+    s.append(edge("M875,624 L888,624 Q898,624 898,614 L898,232 Q898,222 888,222 "
+                  "L466,222", BLUE, "ahb"))
+    s.append(f'<text x="884" y="430" {FONT} font-size="12" fill="{BLUE}" '
+             'text-anchor="middle" font-weight="600" '
+             'transform="rotate(-90 884 430)">the climb</text>')
+    s.append(edge("M760,654 L760,668", FLOW_GREEN, "ahg"))
+    s.append(text(768, 666, "yes", 11, FLOW_GREEN, weight="600"))
+    s += node(596, 672, 310, 40, ["STOP: return best so far, report honestly"],
+              weight="600")
+    s.append(text(751, 732, "no fake green, no infinite loop", 11, MUTED,
+                  anchor="middle"))
+    s.append(text(w - 30, h - 10, "generated by assets/generate_charts.py "
+                                  "(static method diagram, no data plotted)",
+                  10, MUTED, anchor="end"))
     s.append("</svg>")
     return "\n".join(s) + "\n"
 
@@ -645,7 +839,9 @@ def main():
                       ("cost-per-correct-task.svg", chart_cost_per_correct(lanes)),
                       ("four-ways-to-spend.svg", chart_four_ways(lanes)),
                       ("gated-vs-fusion.svg", chart_gated_vs_fusion(lanes)),
-                      ("hero.svg", chart_hero(lanes))):
+                      ("hero.svg", chart_hero(lanes)),
+                      ("hero-quality.svg", chart_hero_quality(obj)),
+                      ("gated-climb-flow.svg", chart_flow())):
         path = os.path.join(ASSETS, name)
         with open(path, "w") as f:
             f.write(svg)
@@ -672,11 +868,17 @@ def main():
         mult = "baseline" if lane == "anvil-v2" else f"{L['cost_per_task'] / base:.1f}x"
         print(f"  {lane:18s} {L['visible']:5.1f}  {L['hidden']:5.1f}  "
               f"${L['cost_per_task']:.4f}  {mult}")
-    print("\nplotted (hero): 100%-visible lanes, most expensive per task first")
+    print("\nplotted (hero): 100%-visible lanes, lowest cost per task first")
     for lane in hero_order(lanes):
         L = lanes[lane]
         mult = "baseline" if lane == "anvil-v2" else f"{L['cost_per_task'] / base:.1f}x"
         print(f"  {lane:18s} visible {L['visible']:5.1f}  ${L['cost_per_task']:.4f}/task  {mult}")
+    print("\nplotted (hero-quality): lane, completed cells, MI, runtime ms, run cost")
+    for lane in Q_ORDER:
+        O = obj[lane]
+        print(f"  {lane:14s} {O['cells']}  mi {O['mi']:.1f}  rt {O['rt']:.0f} ms  "
+              f"${O['cost']:.3f}")
+    print("\ngated-climb-flow.svg: static method diagram, no data plotted")
 
 
 if __name__ == "__main__":

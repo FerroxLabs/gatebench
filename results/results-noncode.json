@@ -1,0 +1,306 @@
+{
+  "protocol": {
+    "measured": "2026-07-22",
+    "design": "2 operator-authored non-code tasks x 3 lanes, N=1 per cell, disclosed",
+    "tasks": {
+      "release_manifest": "structured-gen, 16 visible + 7 hidden checks",
+      "grounded_brief": "research/grounding, 14 visible + 7 hidden checks"
+    },
+    "lanes": {
+      "deepseek-solo": "the gated pool's first-probe model run bare, one-shot, no gate in prompt or loop",
+      "anvil": "the gated climb (Anvil, native gate-first executor): pool deepseek/deepseek-v4-pro, z-ai/glm-5.2, moonshotai/kimi-k3; ladder anthropic/claude-sonnet-5, anthropic/claude-opus-4-8; budget 10",
+      "claude-sonnet-5": "frontier one-shot cost anchor"
+    },
+    "hidden_checks": "authored and committed before any generation run; never in any prompt; validated against a known-good reference and a fluent-but-wrong mutant (records below)",
+    "transport": "OpenRouter for every model call",
+    "cost_note": "solo lane costs are per-response usage.cost; gated lane costs are account usage deltas measured around each run, settled for 25 seconds; 2 additional gated release_manifest runs were discarded for an operator-environment stdout capture fault before any scoring (their spend is disclosed in METHODOLOGY, their outputs were never scored or selected)"
+  },
+  "gate_validation": [
+    {
+      "task": "release_manifest",
+      "fixture": "reference",
+      "expectation": "passes visible and hidden in full",
+      "visible": [
+        16,
+        16
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "artifact": "```json\n{\n  \"name\": \"forgectl\",\n  \"version\": \"2.4.0\",\n  \"released\": \"2026-07-21\",\n  \"channel\": \"stable\",\n  \"artifacts\": [\n    {\n      \"platform\": \"darwin-arm64\",\n      \"filename\": \"forgectl-2.4.0-darwin-arm64.tar.gz\",\n      \"size_bytes\": 14832640\n    },\n    {\n      \"platform\": \"linux-x86_64\",\n      \"filename\": \"forgectl-2.4.0-linux-x86_64.tar.gz\",\n      \"size_bytes\": 15761408\n    },\n    {\n      \"platform\": \"windows-x86_64\",\n      \"filename\": \"forgectl-2.4.0-windows-x86_64.zip\",\n      \"size_bytes\": 16904192\n    }\n  ],\n  \"checksums\": {\n    \"forgectl-2.4.0-darwin-arm64.tar.gz\": \"1afd71a2f9c89dad34d5dee143948adce0120696a595fd047cdbedae15f408a9\",\n    \"forgectl-2.4.0-linux-x86_64.tar.gz\": \"fb0541e51e24b452f5259fa904a6e6fe84cd81cb16381c14c45cf99c03cdf2d7\",\n    \"forgectl-2.4.0-windows-x86_64.zip\": \"a429820be74cea4769ee5629c5cc00da9b2bc4adf9e920150a5c1f3b06e7c9ec\"\n  },\n  \"min_runtime\": {\n    \"node\": \">=20.0.0\"\n  },\n  \"breaking_changes\": [\n    \"The deploy subcommand now requires an explicit --env flag instead of defaulting to staging.\",\n    \"Config files in the legacy INI format are no longer read; run forgectl migrate-config first.\"\n  ],\n  \"signature\": {\n    \"alg\": \"ed25519\",\n    \"key_id\": \"forge-release-2026\",\n    \"sig\": \"0HP/r4ad/TCV1/Qmf08eNJwBHcjMfOCEapwv+sMsmaue16J0Th2Us2LKFltTX8Lq/PiKLqIQ4f7iP19bKvAKp1E=\"\n  }\n}\n```\n"
+    },
+    {
+      "task": "release_manifest",
+      "fixture": "mutant",
+      "expectation": "passes visible in full, drops on hidden",
+      "visible": [
+        16,
+        16
+      ],
+      "hidden": [
+        1,
+        7
+      ],
+      "artifact": "```json\n{\n  \"name\": \"forgectl\",\n  \"version\": \"2.4.0\",\n  \"released\": \"2026-07-21\",\n  \"channel\": \"stable\",\n  \"artifacts\": [\n    {\n      \"platform\": \"darwin-arm64\",\n      \"filename\": \"forgectl-2.4.0-darwin-arm64.tar.gz\",\n      \"size_bytes\": 4200000\n    },\n    {\n      \"platform\": \"linux-x86_64\",\n      \"filename\": \"forgectl-2.4.0-linux-x86_64.tar.gz\",\n      \"size_bytes\": 4200000\n    },\n    {\n      \"platform\": \"windows-x86_64\",\n      \"filename\": \"forgectl-2.4.0-windows-x86_64.zip\",\n      \"size_bytes\": 4200000\n    }\n  ],\n  \"checksums\": {\n    \"forgectl-2.4.0-darwin-arm64.tar.gz\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"forgectl-2.4.0-linux-x86_64.tar.gz\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"forgectl-2.4.0-windows-x86_64.zip\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n  },\n  \"min_runtime\": {\n    \"node\": \">=20.0.0\"\n  },\n  \"breaking_changes\": [\n    \"Breaking change.\",\n    \"Breaking change.\"\n  ],\n  \"signature\": {\n    \"alg\": \"ed25519\",\n    \"key_id\": \"key\",\n    \"sig\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\"\n  }\n}\n```\n"
+    },
+    {
+      "task": "grounded_brief",
+      "fixture": "reference",
+      "expectation": "passes visible and hidden in full",
+      "visible": [
+        14,
+        14
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "artifact": "The v1.7 benchmark evaluated 20 systems on 5 algorithmic tasks, scoring each against 133 visible checks and 63 hidden checks [S1]. Its central result concerns a gated pool of low-cost models climbing against a machine gate [S1]. The gated pool scored 100% on visible checks and 98% on hidden checks [S1]. It reached that score at an average task cost of $0.032 [S1]. The strongest frontier lane matched that correctness only at 6 to 29 times the cost [S1]. The same pool run without a gate scored 88% on visible checks and 84% on hidden checks [S1]. That contrast is the headline: the lift comes from the gate, not from the models [S1]. An objective re-score normalized formatting with an auto-formatter before measuring anything else [S2]. After that normalization the gated pool recorded the highest maintainability index in the fold, at 51.6 [S2]. It also recorded the fastest measured runtime in the fold, at 103 ms [S2]. It did so with zero high-severity security findings [S2]. Judge preferences for frontier output were driven mostly by formatting rather than substance [S2]. The benchmark also recorded its own limits with unusual candor [S3]. All tasks were single-file Python algorithms, so the results may not transfer to multi-file or non-code work [S3]. The gates were authored by the benchmark operators themselves and validated against reference solutions and known-bad mutants [S3]. A multi-round polish stage was tested and rejected [S3]. That polish stage reduced hidden-check correctness from 100% to 93% even as it raised judge scores [S3]. The operators also state plainly that the verification gates are not tamper-proof against adversarial submissions [S3]. Taken together, the benchmark establishes that a machine gate converts low-cost model output into frontier-grade correctness at a small fraction of the cost [S1]. Its evidence base remains narrow, and the honest limits it records are the right frame for reading the headline numbers [S3].\n"
+    },
+    {
+      "task": "grounded_brief",
+      "fixture": "mutant",
+      "expectation": "passes visible in full, drops on hidden",
+      "visible": [
+        14,
+        14
+      ],
+      "hidden": [
+        0,
+        7
+      ],
+      "artifact": "The v1.7 benchmark evaluated 20 systems on 5 algorithmic tasks, scoring each against 133 visible checks and 63 hidden checks [S1]. Its central result concerns a gated pool of low-cost models climbing against a machine gate [S1]. The gated pool scored 100% on visible checks and 98% on hidden checks [S1]. It reached that score at an average task cost of $0.032 [S1]. The gated pool delivered that correctness at 6 to 29 times the cost of the alternatives [S1]. The gated pool itself scored 88% on visible checks and 84% on hidden checks in one fold [S1]. That contrast is the headline: the lift comes from the gate, not from the models [S1]. An objective re-score normalized formatting with an auto-formatter before measuring anything else [S2]. After normalization the gated pool recorded the highest efficiency rating in the fold, at 51.6 [S2]. It also recorded a throughput figure of 103 in the fold [S2]. It did so with zero high-severity security findings [S2]. Judge preferences for frontier output were driven mostly by formatting rather than substance [S2]. The benchmark also recorded its own limits with unusual candor [S3]. All tasks were single-file Python algorithms, so the results may not transfer to multi-file or non-code work [S3]. The gates were authored by the benchmark operators themselves and validated against reference solutions and known-bad mutants [S3]. A multi-round polish stage was tested and rejected [S3]. The multi-round polish stage lifted hidden-check correctness to 93% while raising judge scores [S3]. The operators state that the verification gates are tamper-proof against adversarial submissions [S3]. Taken together, the benchmark establishes that a machine gate converts low-cost model output into frontier-grade correctness at a small fraction of the cost [S1]. Its evidence base remains narrow, and the honest limits it records are the right frame for reading the headline numbers [S3]. The gated pool held 98% on visible checks across every scored fold [S1]. The pattern echoes objective re-score trends reported around gpt style systems [S2].\n"
+    }
+  ],
+  "cells": [
+    {
+      "lane": "deepseek-solo",
+      "task": "release_manifest",
+      "ok": true,
+      "visible": [
+        16,
+        16
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "cost": 0.00882125244,
+      "finish": "stop",
+      "via": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "one_shot": true,
+      "cost_method": "response usage.cost",
+      "artifact": "```json\n{\n  \"name\": \"forgectl\",\n  \"version\": \"2.4.0\",\n  \"released\": \"2026-07-21\",\n  \"channel\": \"stable\",\n  \"artifacts\": [\n    {\n      \"platform\": \"darwin-arm64\",\n      \"filename\": \"forgectl-2.4.0-darwin-arm64.tar.gz\",\n      \"size_bytes\": 1523400\n    },\n    {\n      \"platform\": \"linux-x86_64\",\n      \"filename\": \"forgectl-2.4.0-linux-x86_64.tar.gz\",\n      \"size_bytes\": 1487000\n    },\n    {\n      \"platform\": \"windows-x86_64\",\n      \"filename\": \"forgectl-2.4.0-windows-x86_64.zip\",\n      \"size_bytes\": 1612000\n    }\n  ],\n  \"checksums\": {\n    \"forgectl-2.4.0-darwin-arm64.tar.gz\": \"a3f8b2c1d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1\",\n    \"forgectl-2.4.0-linux-x86_64.tar.gz\": \"b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3\",\n    \"forgectl-2.4.0-windows-x86_64.zip\": \"c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4\"\n  },\n  \"min_runtime\": {\n    \"node\": \">=20.0.0\"\n  },\n  \"breaking_changes\": [\n    \"Removed deprecated --legacy flag from all commands.\"\n  ],\n  \"signature\": {\n    \"alg\": \"ed25519\",\n    \"key_id\": \"key1234\",\n    \"sig\": \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvw=\"\n  }\n}\n```"
+    },
+    {
+      "lane": "anvil",
+      "task": "release_manifest",
+      "ok": true,
+      "visible": [
+        16,
+        16
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "cost": 0.069807,
+      "via": "openrouter",
+      "one_shot": false,
+      "cost_method": "account usage delta around the run (the native executor does not yet report per-call cost)",
+      "rounds_used": 3,
+      "escalated": false,
+      "stop_reason": "green",
+      "anvil_log": [
+        {
+          "action": "probe",
+          "model": "deepseek/deepseek-v4-pro",
+          "ok": true,
+          "score": [
+            15,
+            16
+          ],
+          "fails": [
+            "signature-ed25519-shape"
+          ]
+        },
+        {
+          "action": "ensemble",
+          "model": "z-ai/glm-5.2",
+          "ok": true,
+          "score": [
+            16,
+            16
+          ],
+          "fails": []
+        },
+        {
+          "action": "ensemble",
+          "model": "moonshotai/kimi-k3",
+          "ok": true,
+          "score": [
+            16,
+            16
+          ],
+          "fails": []
+        },
+        {
+          "action": "stop",
+          "ok": true,
+          "note": "green"
+        }
+      ],
+      "artifact": "{\n  \"name\": \"forgectl\",\n  \"version\": \"2.4.0\",\n  \"released\": \"2026-07-21\",\n  \"channel\": \"stable\",\n  \"artifacts\": [\n    {\n      \"platform\": \"darwin-arm64\",\n      \"filename\": \"forgectl-2.4.0-darwin-arm64.tar.gz\",\n      \"size_bytes\": 2048576\n    },\n    {\n      \"platform\": \"linux-x86_64\",\n      \"filename\": \"forgectl-2.4.0-linux-x86_64.tar.gz\",\n      \"size_bytes\": 1883461\n    },\n    {\n      \"platform\": \"windows-x86_64\",\n      \"filename\": \"forgectl-2.4.0-windows-x86_64.zip\",\n      \"size_bytes\": 1729430\n    }\n  ],\n  \"checksums\": {\n    \"forgectl-2.4.0-darwin-arm64.tar.gz\": \"a3f5e2d1c9b8047f6a2d1e3c5b7a9d0f4e6c8a1b3d5f7e9c0d2a4b6c8e0f2a4d\",\n    \"forgectl-2.4.0-linux-x86_64.tar.gz\": \"b2c4d6e8f0a1b3c5d7e9f0a2b4c6d8e0f1a3b5c7d9e0f2a4b6c8d0e2f4a6b8c0\",\n    \"forgectl-2.4.0-windows-x86_64.zip\": \"c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9a1b3c5d7e9f1a3b5c7d9e1f3a5b7c9d1\"\n  },\n  \"min_runtime\": {\n    \"node\": \">=20.0.0\"\n  },\n  \"breaking_changes\": [\n    \"Drop support for Node 18; minimum runtime is now Node 20.0.0 or newer.\",\n    \"Renamed --forge-namespace flag to --namespace; old flag is no longer accepted.\"\n  ],\n  \"signature\": {\n    \"alg\": \"ed25519\",\n    \"key_id\": \"forge-release-2026-07\",\n    \"sig\": \"t8zK9wQ2vR7nF4mJ1pH6cB3xL5sY0eD8gU2aN4iV9rT1oW7kM3yZ6qH0bX5lC8jF4dS2pG7hN1uE9wI3vR6tY0o=\"\n  }\n}"
+    },
+    {
+      "lane": "claude-sonnet-5",
+      "task": "release_manifest",
+      "ok": true,
+      "visible": [
+        14,
+        16
+      ],
+      "hidden": [
+        6,
+        7
+      ],
+      "visible_pct": 88,
+      "hidden_pct": 86,
+      "cost": 0.023778,
+      "finish": "stop",
+      "via": "openrouter",
+      "model": "anthropic/claude-sonnet-5",
+      "one_shot": true,
+      "cost_method": "response usage.cost",
+      "artifact": "```json\n{\n  \"name\": \"forgectl\",\n  \"version\": \"2.4.0\",\n  \"released\": \"2026-07-21\",\n  \"channel\": \"stable\",\n  \"artifacts\": [\n    {\n      \"platform\": \"darwin-arm64\",\n      \"filename\": \"forgectl-2.4.0-darwin-arm64.tar.gz\",\n      \"size_bytes\": 15832944\n    },\n    {\n      \"platform\": \"linux-x86_64\",\n      \"filename\": \"forgectl-2.4.0-linux-x86_64.tar.gz\",\n      \"size_bytes\": 16110208\n    },\n    {\n      \"platform\": \"windows-x86_64\",\n      \"filename\": \"forgectl-2.4.0-windows-x86_64.zip\",\n      \"size_bytes\": 17293440\n    }\n  ],\n  \"checksums\": {\n    \"forgectl-2.4.0-darwin-arm64.tar.gz\": \"a1b2c3d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef12345\",\n    \"forgectl-2.4.0-linux-x86_64.tar.gz\": \"b2c3d4e5f60718293a4b5c6d7e8f90123456789012345678901bcdef1234567\",\n    \"forgectl-2.4.0-windows-x86_64.zip\": \"c3d4e5f60718293a4b5c6d7e8f9012345678901234567890123cdef12345678\"\n  },\n  \"min_runtime\": {\n    \"node\": \">=20.0.0\"\n  },\n  \"breaking_changes\": [\n    \"Removed deprecated --legacy-auth flag; use --auth-profile instead.\",\n    \"Default output format changed from text to json for all subcommands.\"\n  ],\n  \"signature\": {\n    \"alg\": \"ed25519\",\n    \"key_id\": \"forgectl-release-signing-key-2026\",\n    \"sig\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\"\n  }\n}\n```"
+    },
+    {
+      "lane": "deepseek-solo",
+      "task": "grounded_brief",
+      "ok": true,
+      "visible": [
+        13,
+        14
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "visible_pct": 93,
+      "hidden_pct": 100,
+      "cost": 0.002145507,
+      "finish": "stop",
+      "via": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "one_shot": true,
+      "cost_method": "response usage.cost",
+      "artifact": "The v1.7 benchmark provided the first systematic, head-to-head comparison of a gated cheap-model execution strategy against frontier single-model approaches across twenty evaluated systems, all measured on five discrete algorithmic tasks [S1]. The evaluation harness applied a rigorous dual-layer checking protocol consisting of 133 visible checks and 63 hidden checks to prevent surface-level gaming of the results [S1]. Under this protocol, the gated cheap-model pool achieved a perfect 100 percent score on the visible checks and a 98 percent score on the hidden checks, demonstrating that the gating mechanism successfully filtered and corrected outputs before final submission [S1]. In direct contrast, the strongest frontier lane matched that correctness level only at a cost that was six to twenty-nine times higher, while the same cheap-model pool operating without a gate saw its performance collapse to 88 percent visible and 84 percent hidden correctness [S1]. This established that a gate-first architecture could decouple raw model capability from delivered reliability and cost by intercepting low-quality responses before they reached the check stage [S1]. The average task cost for the gated cheap-model pool was just $0.032, making it radically cheaper than the frontier alternatives for equivalent or superior accuracy [S1]. An objective re-score process later stripped away surface-level formatting biases by running all outputs through an auto-formatter and then measuring lint issues, security findings, cyclomatic complexity, maintainability index, and actual runtime performance [S2]. In that re-score, the gated pool recorded the highest maintainability index in the entire fold at 51.6 and the fastest execution runtime at 103 milliseconds, alongside zero high-severity security findings [S2]. The re-score further revealed that the original LLM-judge preferences, which had often favored frontier models, were driven predominantly by formatting rather than by substantive code quality or correctness [S2]. These findings collectively established that a gated, multi-model pipeline could not only match but often surpass monolithic frontier systems on pure algorithmic merit while slashing computational costs [S1][S2]. The benchmark\u2019s scope, however, was deliberately narrow, as all tasks were limited to single-file Python algorithms, which means the observed benefits may not transfer to multi-file projects, repository-scale engineering, or non-code domains such as prose generation [S3]. Another critical architectural constraint was that the verification gates were authored by the benchmark operators themselves and validated solely against reference solutions and a collection of known-bad mutants, thus they embodied operator-defined rather than automatically derived correctness criteria [S3]. The gates were explicitly not tamper-proof against adversarial submissions, so they cannot guarantee robustness in a setting where a model actively tries to circumvent the checks [S3]. An additional experimental finding further circumscribed the technique\u2019s applicability, since a multi-round LLM polish stage was tested as an enhancement and rejected because it degraded hidden-check correctness from the original 100 percent down to 93 percent, even while it paradoxically raised LLM-judge scores [S3]. Consequently, the benchmark established that a single-pass gated workflow with static checks is currently superior to iterative LLM-driven refinement for these algorithmic tasks, but it also highlighted that surface-level evaluation metrics and human-preference scores can be actively misleading proxies for hidden functional correctness [S2][S3]. The overall outcome is a qualified proof that gate-first execution with small models can match frontier quality at a fraction of the cost under controlled, single-file coding conditions, yet the approach remains untested and unverified beyond that tightly bounded experimental frame [S1][S3]."
+    },
+    {
+      "lane": "anvil",
+      "task": "grounded_brief",
+      "ok": true,
+      "visible": [
+        14,
+        14
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "visible_pct": 100,
+      "hidden_pct": 100,
+      "cost": 0.061529,
+      "via": "openrouter",
+      "one_shot": false,
+      "cost_method": "account usage delta around the run (the native executor does not yet report per-call cost)",
+      "rounds_used": 4,
+      "escalated": false,
+      "stop_reason": "green",
+      "anvil_log": [
+        {
+          "action": "probe",
+          "model": "deepseek/deepseek-v4-pro",
+          "ok": true,
+          "score": [
+            13,
+            14
+          ],
+          "fails": [
+            "all-numeric-sentences-cited"
+          ]
+        },
+        {
+          "action": "ensemble",
+          "model": "z-ai/glm-5.2",
+          "ok": true,
+          "score": [
+            12,
+            14
+          ],
+          "fails": [
+            "all-numeric-sentences-cited",
+            "all-numbers-grounded-in-cited-source"
+          ]
+        },
+        {
+          "action": "ensemble",
+          "model": "moonshotai/kimi-k3",
+          "ok": true,
+          "score": [
+            13,
+            14
+          ],
+          "fails": [
+            "no-content-free-citations"
+          ]
+        },
+        {
+          "action": "surgical",
+          "model": "deepseek/deepseek-v4-pro",
+          "target": "all-numeric-sentences-cited",
+          "ok": true,
+          "score": [
+            14,
+            14
+          ],
+          "fails": []
+        },
+        {
+          "action": "stop",
+          "ok": true,
+          "note": "green"
+        }
+      ],
+      "artifact": "The v1.7 benchmark evaluated 20 systems across five algorithmic tasks with 133 visible and 63 hidden checks [S1]. The gated cheap-model pool scored perfect 100% on visible checks and 98% on hidden checks at an average cost of $0.032 per task [S1]. By comparison, the strongest frontier lane matched that correctness but cost 6 to 29 times more [S1]. Without the gate, the same cheap model pool dropped to 88% on visible checks and 84% on hidden checks [S1]. The benchmark also conducted an objective re-score [S2]. That re-score first normalized formatting with an auto-formatter [S2]. After normalization, it measured lint issues, security findings, cyclomatic complexity, maintainability index, and runtime [S2]. The gated pool achieved the highest maintainability index of 51.6 among all entrants [S2]. It also recorded the fastest runtime in the fold at 103 ms [S2]. Additionally, the gated pool produced zero high-severity security findings [S2]. Meanwhile, LLM-judge preferences were found to be driven mostly by formatting rather than substantive code differences [S2]. Turning to limitations, the benchmark's tasks were limited to single-file Python algorithms [S3]. Therefore, the results may not transfer to multi-file projects or non-code work [S3]. The verification gates were authored by the benchmark operators themselves [S3]. They were validated against reference solutions and known-bad mutants to ensure effectiveness [S3]. A multi-round LLM polish stage was tested as a potential enhancement but was rejected [S3]. This polishing reduced hidden-check correctness from 100% to 93% while paradoxically raising judge scores [S3]. Moreover, the gates are not tamper-proof against adversarial submissions, posing a security concern [S3]."
+    },
+    {
+      "lane": "claude-sonnet-5",
+      "task": "grounded_brief",
+      "ok": true,
+      "visible": [
+        12,
+        14
+      ],
+      "hidden": [
+        7,
+        7
+      ],
+      "visible_pct": 86,
+      "hidden_pct": 100,
+      "cost": 0.011376,
+      "finish": "stop",
+      "via": "openrouter",
+      "model": "anthropic/claude-sonnet-5",
+      "one_shot": true,
+      "cost_method": "response usage.cost",
+      "artifact": "The 2026 v1.7 benchmark evaluated 20 systems across 5 algorithmic tasks using 133 visible and 63 hidden checks [S1]. Within this setup, a gated cheap-model pool achieved 100% accuracy on visible checks and 98% on hidden checks, at an average task cost of $0.032 [S1]. The strongest frontier lane matched this correctness but did so at 6 to 29 times the cost of the gated cheap pool [S1]. When the same cheap-model pool was run without a gate, performance dropped to 88% on visible checks and 84% on hidden checks, indicating the gate itself was responsible for a substantial correctness gain [S1]. This establishes that gating cheap models can approach or match frontier-lane correctness while dramatically reducing cost [S1]. Beyond correctness, an objective re-score was conducted to assess code quality independent of surface style [S2]. This re-score normalized formatting using an auto-formatter, then measured lint issues, security findings, cyclomatic complexity, maintainability index, and actual runtime [S2]. The gated pool achieved the highest maintainability index in the fold at 51.6 and the fastest runtime at 103 ms, alongside zero high-severity security findings [S2]. Notably, LLM-judge preferences that favored frontier-model output were found to be driven mostly by formatting differences rather than substantive code quality [S2]. Together, these findings suggest that gated cheap-model pools not only match correctness cost-effectively but also produce maintainable, performant, and secure code, undermining judge-based preferences that reward superficial polish [S1][S2]. However, the benchmark has explicit limits that constrain generalization [S3]. The evaluated tasks were restricted to single-file Python algorithmic problems, so results may not transfer to multi-file projects or non-code work [S3]. The verification gates themselves were authored by the benchmark operators, who validated them against reference solutions and known-bad mutants, meaning gate quality depends on the operators' own judgment and test design [S3]. A multi-round LLM polish stage was also tested and subsequently rejected as part of the benchmark design, because it reduced hidden-check correctness from 100% to 93% even though it raised judge scores [S3]. This rejection reinforces the broader finding that judge-based scoring can diverge from actual correctness [S2][S3]. Finally, the benchmark's authors acknowledge that the verification gates are not tamper-proof against adversarial submissions, leaving open the possibility that a system could game the gates without producing genuinely correct or high-quality code [S3]. Taken together, the benchmark establishes strong evidence that gating is a cost-effective mechanism for achieving frontier-level correctness and code quality with cheap models on constrained algorithmic tasks [S1][S2], while simultaneously flagging that this evidence is scoped to single-file Python problems, dependent on operator-authored gates, and vulnerable to adversarial gaming [S3]."
+    }
+  ]
+}

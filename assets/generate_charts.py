@@ -827,11 +827,116 @@ def chart_flow():
     return "\n".join(s) + "\n"
 
 
+# ---------------------------------------------------------------- chart 10: non-code gate lift (dark)
+NC_TASKS = ["release_manifest", "grounded_brief"]
+NC_TITLES = {"release_manifest": "release_manifest (structured-gen)",
+             "grounded_brief": "grounded_brief (grounded research)"}
+
+
+def load_noncode():
+    """Cells of results/results-noncode.json, cross-checked: the recorded percentages
+    must reproduce from the recorded raw counts, or we refuse to draw."""
+    doc = json.load(open(os.path.join(RESULTS, "results-noncode.json")))
+    cells = {}
+    bad = []
+    for c in doc["cells"]:
+        for axis in ("visible", "hidden"):
+            n, m = c[axis]
+            if round(100 * n / max(1, m)) != c[f"{axis}_pct"]:
+                bad.append(f"{c['lane']}/{c['task']}: {axis} {n}/{m} does not give "
+                           f"the recorded {c[f'{axis}_pct']}%")
+        cells[(c["lane"], c["task"])] = c
+    for task in NC_TASKS:
+        for lane in ("deepseek-solo", "anvil"):
+            if (lane, task) not in cells:
+                bad.append(f"missing cell {lane}/{task}")
+    if bad:
+        raise SystemExit("noncode aggregates do not reproduce results-noncode.json:\n  "
+                         + "\n  ".join(bad))
+    print(f"cross-check: {len(doc['cells'])} non-code cells reproduce "
+          "results/results-noncode.json exactly")
+    return cells
+
+
+def chart_noncode_lift(nc):
+    w, h = 1200, 630
+    s = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
+         f'viewBox="0 0 {w} {h}" role="img" aria-label="Dark grouped-bar chart, 2 '
+         'panels, 1 per non-code task. On each task the same low-cost pool is shown '
+         'ungated (its first-probe model one-shot) and gated (Anvil), on the visible '
+         'and the hidden gate. The gated lane is at 100 percent on all 4 bars.">',
+         f'<rect width="{w}" height="{h}" fill="{SURFACE_D}"/>']
+    s.append(text(60, 48, "The gate lifts non-code work too: same pool, ungated vs gated",
+                  23, INK_D, weight="700"))
+    s.append(text(60, 74, "2 non-code tasks, 30 visible + 14 hidden machine checks. "
+                          "Ungated is the pool's first-probe model one-shot; gated is the "
+                          "same pool wrapped in the visible gate", 13, INK2_D))
+    s.append(text(60, 94, "with a non-regressive climb (Anvil). The hidden checks were "
+                          "authored before any run and never entered any prompt.",
+                  13, INK2_D))
+    y0, ph = 190, 300
+    ymax = 105.0
+
+    def Y(v):
+        return y0 + (ymax - v) / ymax * ph
+
+    for pi, task in enumerate(NC_TASKS):
+        x0 = 100 + pi * 560
+        pw = 440
+        s.append(text(x0 + pw / 2, 152, NC_TITLES[task], 14, INK_D, anchor="middle",
+                      weight="600"))
+        for v in (0, 25, 50, 75, 100):
+            y = Y(v)
+            s.append(f'<line x1="{x0}" y1="{y:.1f}" x2="{x0 + pw}" y2="{y:.1f}" '
+                     f'stroke="{GRID_D}" stroke-width="1"/>')
+            if pi == 0:
+                s.append(text(x0 - 10, y + 4, str(v), 11, INK2_D, anchor="end"))
+        solo, gated = nc[("deepseek-solo", task)], nc[("anvil", task)]
+        bw, inner = 74, 10
+        for gi, axis in enumerate(("visible", "hidden")):
+            gx = x0 + 44 + gi * 220
+            for (cell, color, hot) in ((solo, STEEL_D, False), (gated, GREEN_D, True)):
+                x = gx if not hot else gx + bw + inner
+                v = cell[f"{axis}_pct"]
+                y = Y(v)
+                if hot:
+                    s.append(f'<rect x="{x - 3}" y="{y - 3:.1f}" width="{bw + 6}" '
+                             f'height="{Y(0) - y + 6:.1f}" rx="7" fill="{GREEN_D}" '
+                             'fill-opacity="0.28"/>')
+                s.append(f'<rect x="{x}" y="{y:.1f}" width="{bw}" '
+                         f'height="{Y(0) - y:.1f}" rx="4" fill="{color}"/>')
+                n, m = cell[axis]
+                s.append(text(x + bw / 2, y - 24, f"{v}%", 13,
+                              INK_D if hot else INK2_D, anchor="middle",
+                              weight="700" if hot else "normal"))
+                s.append(text(x + bw / 2, y - 8, f"{n}/{m}", 11, INK2_D,
+                              anchor="middle"))
+            s.append(text(gx + bw + inner / 2, Y(0) + 22,
+                          f"{axis} gate %", 12, INK2_D, anchor="middle"))
+        cost_note = (f"cost: ungated ${solo['cost']:.4f} vs gated ${gated['cost']:.4f}"
+                     f" ({gated['rounds_used']} rounds, no escalation)")
+        s.append(text(x0 + pw / 2, Y(0) + 46, cost_note, 11, INK2_D, anchor="middle"))
+    # legend
+    lx, ly = 480, 566
+    for i, (color, label) in enumerate(((STEEL_D, "ungated: deepseek-solo, one-shot"),
+                                        (GREEN_D, "gated: Anvil, same pool + gate"))):
+        x = lx + i * 300
+        s.append(f'<rect x="{x}" y="{ly}" width="14" height="14" rx="3" fill="{color}"/>')
+        s.append(text(x + 22, ly + 11, label, 12, INK2_D))
+    s.append(text(60, h - 14, "github.com/FerroxLabs/gatebench", 10, INK2_D))
+    s.append(text(w - 60, h - 14, "generated by assets/generate_charts.py from "
+                                  "results/results-noncode.json", 10, INK2_D,
+                  anchor="end"))
+    s.append("</svg>")
+    return "\n".join(s) + "\n"
+
+
 # ---------------------------------------------------------------- main
 def main():
     lanes = load_fold()
     check_against_shipped_table(lanes)
     obj = load_objective()
+    nc = load_noncode()
     os.makedirs(ASSETS, exist_ok=True)
     for name, svg in (("cost-vs-correctness.svg", chart_cost_vs_correctness(lanes)),
                       ("objective-substance.svg", chart_objective(obj)),
@@ -841,7 +946,8 @@ def main():
                       ("gated-vs-fusion.svg", chart_gated_vs_fusion(lanes)),
                       ("hero.svg", chart_hero(lanes)),
                       ("hero-quality.svg", chart_hero_quality(obj)),
-                      ("gated-climb-flow.svg", chart_flow())):
+                      ("gated-climb-flow.svg", chart_flow()),
+                      ("noncode-gate-lift.svg", chart_noncode_lift(nc))):
         path = os.path.join(ASSETS, name)
         with open(path, "w") as f:
             f.write(svg)
@@ -879,6 +985,12 @@ def main():
         print(f"  {lane:14s} {O['cells']}  mi {O['mi']:.1f}  rt {O['rt']:.0f} ms  "
               f"${O['cost']:.3f}")
     print("\ngated-climb-flow.svg: static method diagram, no data plotted")
+    print("\nplotted (noncode-gate-lift): lane, task, visible%, hidden%, cost")
+    for task in NC_TASKS:
+        for lane in ("deepseek-solo", "anvil"):
+            c = nc[(lane, task)]
+            print(f"  {lane:14s} {task:18s} {c['visible_pct']:3d}  {c['hidden_pct']:3d}  "
+                  f"${c['cost']:.4f}")
 
 
 if __name__ == "__main__":

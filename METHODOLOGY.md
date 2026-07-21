@@ -126,3 +126,51 @@ and embedded code.
 All figures trace to `results/*.json` (regenerate the ranked table with `runners/agg.py`, and
 every README chart with `assets/generate_charts.py` — its output is byte-deterministic, so a
 regenerated chart that differs from the shipped one is itself evidence of a discrepancy).
+
+## 7. Addendum: the non-code protocol (measured 2026-07-22)
+
+2 operator-authored non-code tasks, run to the same verifiability standard as the fold and
+recorded in `results/results-noncode.json` (artifacts embedded verbatim, climb traces
+included, offline recheck via `verify/verify_noncode.py`).
+
+**Tasks.** `release_manifest` (structured generation: a strict JSON release manifest, 16
+visible checks) and `grounded_brief` (grounded research: an 18 to 35 sentence cited brief
+scored by a deterministic grounding gate, 14 visible checks). Specs and visible gates are
+verbatim copies of the gate-first executor's v1.8 native proof tasks and ship in
+`tasks/noncode/`.
+
+**Hidden sets, authored first.** Each task received 7 hidden checks targeting its visible
+gate's blind spot: schema-valid-but-semantically-wrong fields for the manifest (placeholder
+checksums, degenerate signatures, filler key ids, cloned sizes) and
+grounded-numbers-but-inverted-claims for the brief (claims that cite a source the source
+contradicts, swapped metric attributions, entities absent from every source). The hidden
+gates were written and committed before any generation call, never entered any prompt, and
+were validated against a known-good reference (passes both tiers in full) and a
+fluent-but-wrong mutant (passes the visible gates 16/16 and 14/14, drops to 1/7 and 0/7
+hidden). Both fixtures ship embedded in the results JSON and are re-checked by
+`verify_noncode.py`.
+
+**Lanes, N=1 per cell, disclosed.** (1) `deepseek-solo`: the gated pool's first-probe model
+(`deepseek/deepseek-v4-pro`) one-shot on the spec, no gate in prompt or loop; (2) `anvil`:
+the gated climb via the native gate-first executor, pool `deepseek/deepseek-v4-pro`,
+`z-ai/glm-5.2`, `moonshotai/kimi-k3`, ladder `anthropic/claude-sonnet-5`,
+`anthropic/claude-opus-4-8`, budget 10, all calls via OpenRouter; (3) `claude-sonnet-5`
+one-shot as the frontier cost anchor. On both tasks the first probe scored 1 check short of
+green and the climb repaired it in-pool: an ensemble candidate went 16/16 on the manifest,
+and a surgical repair targeting `all-numeric-sentences-cited` went 14/14 on the brief. No
+escalation was needed; full traces in the JSON.
+
+**Cost measurement.** Solo-lane costs are per-response `usage.cost` from the transport, as
+in §5. The native executor does not yet report per-call cost, so gated-lane costs are
+account-level usage deltas measured immediately around each run with a 25 second settling
+window; deltas were stable across consecutive probes. 2 earlier gated `release_manifest`
+runs were discarded before scoring because an output-filtering proxy in the operator's shell
+swallowed the executor's result envelope (an operator-environment fault, not an executor
+fault; the recorded runs used an unfiltered passthrough). Their outputs were never scored or
+selected. Total measured session spend, discarded runs included: $0.3911, of which the 6
+recorded cells account for $0.1775.
+
+**Same caveats as the fold.** Operator-authored tasks and gates, product under test built by
+the same operator, N=1 per cell. The hidden validation mutants, the offline re-verifier, and
+the hidden-set-first commit ordering are the mitigations, not a substitute for third-party
+authorship.

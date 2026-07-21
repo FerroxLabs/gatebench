@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Dark grouped-bar chart, 2 panels, 1 per non-code task. On each task the same low-cost pool is shown ungated (its first-probe model one-shot) and gated (Anvil), on the visible and the hidden gate. The gated lane is at 100 percent on all 4 bars.">
+<rect width="1200" height="630" fill="#0e1113"/>
+<text x="60.0" y="48.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="23" fill="#e8eaec" text-anchor="start" font-weight="700">The gate lifts non-code work too: same pool, ungated vs gated</text>
+<text x="60.0" y="74.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="start">2 non-code tasks, 30 visible + 14 hidden machine checks. Ungated is the pool's first-probe model one-shot; gated is the same pool wrapped in the visible gate</text>
+<text x="60.0" y="94.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="start">with a non-regressive climb (Anvil). The hidden checks were authored before any run and never entered any prompt.</text>
+<text x="320.0" y="152.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="14" fill="#e8eaec" text-anchor="middle" font-weight="600">release_manifest (structured-gen)</text>
+<line x1="100" y1="490.0" x2="540" y2="490.0" stroke="#2c3237" stroke-width="1"/>
+<text x="90.0" y="494.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="end">0</text>
+<line x1="100" y1="418.6" x2="540" y2="418.6" stroke="#2c3237" stroke-width="1"/>
+<text x="90.0" y="422.6" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="end">25</text>
+<line x1="100" y1="347.1" x2="540" y2="347.1" stroke="#2c3237" stroke-width="1"/>
+<text x="90.0" y="351.1" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="end">50</text>
+<line x1="100" y1="275.7" x2="540" y2="275.7" stroke="#2c3237" stroke-width="1"/>
+<text x="90.0" y="279.7" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="end">75</text>
+<line x1="100" y1="204.3" x2="540" y2="204.3" stroke="#2c3237" stroke-width="1"/>
+<text x="90.0" y="208.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="end">100</text>
+<rect x="144" y="204.3" width="74" height="285.7" rx="4" fill="#3e5a75"/>
+<text x="181.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="middle">100%</text>
+<text x="181.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">16/16</text>
+<rect x="225" y="201.3" width="80" height="291.7" rx="7" fill="#2fbf5f" fill-opacity="0.28"/>
+<rect x="228" y="204.3" width="74" height="285.7" rx="4" fill="#2fbf5f"/>
+<text x="265.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#e8eaec" text-anchor="middle" font-weight="700">100%</text>
+<text x="265.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">16/16</text>
+<text x="223.0" y="512.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="middle">visible gate %</text>
+<rect x="364" y="204.3" width="74" height="285.7" rx="4" fill="#3e5a75"/>
+<text x="401.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="middle">100%</text>
+<text x="401.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">7/7</text>
+<rect x="445" y="201.3" width="80" height="291.7" rx="7" fill="#2fbf5f" fill-opacity="0.28"/>
+<rect x="448" y="204.3" width="74" height="285.7" rx="4" fill="#2fbf5f"/>
+<text x="485.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#e8eaec" text-anchor="middle" font-weight="700">100%</text>
+<text x="485.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">7/7</text>
+<text x="443.0" y="512.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="middle">hidden gate %</text>
+<text x="320.0" y="536.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">cost: ungated $0.0088 vs gated $0.0698 (3 rounds, no escalation)</text>
+<text x="880.0" y="152.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="14" fill="#e8eaec" text-anchor="middle" font-weight="600">grounded_brief (grounded research)</text>
+<line x1="660" y1="490.0" x2="1100" y2="490.0" stroke="#2c3237" stroke-width="1"/>
+<line x1="660" y1="418.6" x2="1100" y2="418.6" stroke="#2c3237" stroke-width="1"/>
+<line x1="660" y1="347.1" x2="1100" y2="347.1" stroke="#2c3237" stroke-width="1"/>
+<line x1="660" y1="275.7" x2="1100" y2="275.7" stroke="#2c3237" stroke-width="1"/>
+<line x1="660" y1="204.3" x2="1100" y2="204.3" stroke="#2c3237" stroke-width="1"/>
+<rect x="704" y="224.3" width="74" height="265.7" rx="4" fill="#3e5a75"/>
+<text x="741.0" y="200.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="middle">93%</text>
+<text x="741.0" y="216.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">13/14</text>
+<rect x="785" y="201.3" width="80" height="291.7" rx="7" fill="#2fbf5f" fill-opacity="0.28"/>
+<rect x="788" y="204.3" width="74" height="285.7" rx="4" fill="#2fbf5f"/>
+<text x="825.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#e8eaec" text-anchor="middle" font-weight="700">100%</text>
+<text x="825.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">14/14</text>
+<text x="783.0" y="512.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="middle">visible gate %</text>
+<rect x="924" y="204.3" width="74" height="285.7" rx="4" fill="#3e5a75"/>
+<text x="961.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#a6adb3" text-anchor="middle">100%</text>
+<text x="961.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">7/7</text>
+<rect x="1005" y="201.3" width="80" height="291.7" rx="7" fill="#2fbf5f" fill-opacity="0.28"/>
+<rect x="1008" y="204.3" width="74" height="285.7" rx="4" fill="#2fbf5f"/>
+<text x="1045.0" y="180.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" fill="#e8eaec" text-anchor="middle" font-weight="700">100%</text>
+<text x="1045.0" y="196.3" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">7/7</text>
+<text x="1003.0" y="512.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="middle">hidden gate %</text>
+<text x="880.0" y="536.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="11" fill="#a6adb3" text-anchor="middle">cost: ungated $0.0021 vs gated $0.0615 (4 rounds, no escalation)</text>
+<rect x="480" y="566" width="14" height="14" rx="3" fill="#3e5a75"/>
+<text x="502.0" y="577.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="start">ungated: deepseek-solo, one-shot</text>
+<rect x="780" y="566" width="14" height="14" rx="3" fill="#2fbf5f"/>
+<text x="802.0" y="577.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" fill="#a6adb3" text-anchor="start">gated: Anvil, same pool + gate</text>
+<text x="60.0" y="616.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="10" fill="#a6adb3" text-anchor="start">github.com/FerroxLabs/gatebench</text>
+<text x="1140.0" y="616.0" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="10" fill="#a6adb3" text-anchor="end">generated by assets/generate_charts.py from results/results-noncode.json</text>
+</svg>

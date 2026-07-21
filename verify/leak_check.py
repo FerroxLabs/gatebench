@@ -33,7 +33,7 @@ PATTERNS = [
 def main():
     hits = 0
     for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")]
         for fn in sorted(filenames):
             path = os.path.join(dirpath, fn)
             rel = os.path.relpath(path, ROOT)

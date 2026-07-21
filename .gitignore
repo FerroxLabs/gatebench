@@ -4,3 +4,4 @@ __pycache__/
 # locally generated outputs (shipped evidence is committed; these are yours)
 results/results-local.json
 results/table-regen.md
+.ijfw/
